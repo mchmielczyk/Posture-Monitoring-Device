@@ -1,0 +1,23 @@
+/*
+ * cm53697pd.h
+ *
+ *  Created on: Dec 5, 2025
+ *      Author: Michał
+ */
+
+#ifndef INC_CM53697PD_H_
+#define INC_CM53697PD_H_
+
+#include "adxl345.h"
+
+ADXL345Data AdxlLAR = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,LAR_CS_GPIO_Port,LAR_CS_Pin,"LAR"};
+ADXL345Data AdxlRAR = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,RAR_CS_GPIO_Port,RAR_CS_Pin,"RAR"};
+ADXL345Data AdxlLFO = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,LFO_CS_GPIO_Port,LFO_CS_Pin,"LFO"};
+ADXL345Data AdxlRFO = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,RFO_CS_GPIO_Port,RFO_CS_Pin,"RFO"};
+ADXL345Data AdxlBAC = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,BAC_CS_GPIO_Port,BAC_CS_Pin,"BAC"};
+
+ADXL345Data *devicesPtr[5] = {&AdxlLAR,&AdxlRAR,&AdxlLFO,&AdxlRFO,&AdxlBAC};
+
+void ADXL_RawData(ADXL345Data *Device[], char*Dest, uint8_t Size);
+void DWT_CycleStart(void);
+#endif /* INC_CM53697PD_H_ */
