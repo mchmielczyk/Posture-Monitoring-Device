@@ -8,14 +8,22 @@
 #ifndef INC_ADXL345_H_
 #define INC_ADXL345_H_
 
-#include "stdint.h"
+#include <stdint.h>
+
+#ifdef FLAG_TEST_F_
+#include "fake_spi.h"
+#include "fake_gpio.h"
+#else
 #include "spi.h"
 #include "gpio.h"
+#endif
+
+
 
 #define ADXL345_DEVID 				0x00 //Device ID
 #define ADXL345_THRESH_TAP 			0x1D //Tap threshold
 #define ADXL345_OFSX 				0x1E //X-axis offset
-#define ADXL345_OFSY 				0x1F //Y-axis offse
+#define ADXL345_OFSY 				0x1F //Y-axis offset
 #define ADXL345_OFSZ 				0x20 //Z-axis offset
 #define ADXL345_DUR 				0x21 //Tap duration
 #define ADXL345_Latent 				0x22 //Tap latency

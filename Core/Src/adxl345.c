@@ -5,6 +5,12 @@
  *      Author: Michał Chmielczyk
  */
 
+//sprawdzenie poprawnego devid
+//odczyt z akcelerometrow
+//zapis do akcelerometrow
+//handlowanie braku dostepu do urzadzenia
+//return statusu zadania
+//rtos safety
 #include "adxl345.h"
 
 volatile uint8_t spiStatus=0;

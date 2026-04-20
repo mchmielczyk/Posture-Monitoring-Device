@@ -1,1 +1,1 @@
-# Posture-Monitoring-Device
+# Posture Monitoring Device
