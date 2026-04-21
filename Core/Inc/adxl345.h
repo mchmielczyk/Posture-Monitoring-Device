@@ -13,6 +13,7 @@
 #ifdef FLAG_TEST_F_
 #include "fake_spi.h"
 #include "fake_gpio.h"
+#include "fake_hal.h"
 #else
 #include "spi.h"
 #include "gpio.h"
@@ -64,29 +65,43 @@
 
 typedef struct
 {
-uint8_t DATAX0;
-uint8_t DATAX1;
-uint8_t DATAY0;
-uint8_t DATAY1;
-uint8_t DATAZ0;
-uint8_t DATAZ1;
-uint16_t DATAX;
-uint16_t DATAY;
-uint16_t DATAZ;
-GPIO_TypeDef *PORT;
-uint16_t PIN;
-char name[3];
+uint8_t 							DATAX0;
+uint8_t 							DATAX1;
+uint8_t 							DATAY0;
+uint8_t 							DATAY1;
+uint8_t  							DATAZ0;
+uint8_t 							DATAZ1;
+uint16_t 							DATAX;
+uint16_t 							DATAY;
+uint16_t 							DATAZ;
+GPIO_TypeDef*						PORT;
+uint16_t 							PIN;
+char 								name[3];
 }ADXL345Data;
 
-void ADXL_ReadDevice(ADXL345Data *Device);
-void ADXL_SetMeasure(ADXL345Data *Device, uint8_t mode);
-void ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);
-void ADXL_SetRange(ADXL345Data *Device, uint8_t Range);
-void ADXL_SetFullResolution(ADXL345Data *Device);
-void ADXL_SetJustify(ADXL345Data *Device, uint8_t mode);
-uint8_t ADXL_CheckDevice(ADXL345Data *Device);
-void ADXL_SetOffset(ADXL345Data *Device, uint8_t offX, uint8_t offY, uint8_t offZ);
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi);
-void ADXL_MultiReadDevice(ADXL345Data *Device);
+typedef void 						(*SPI_TxCpltCallback_fn)(SPI_HandleTypeDef *);
+typedef void 						(*SPI_TxRxCpltCallback_fn)(SPI_HandleTypeDef *);
+typedef void 						(*GPIO_WritePin_fn)(GPIO_TypeDef*, uint16_t, GPIO_PinState);
+typedef HAL_StatusTypeDef 			(*SPI_Transmit_DMA_fn)(SPI_HandleTypeDef*, const uint8_t *, uint16_t);
+typedef HAL_StatusTypeDef 			(*SPI_TransmitReceive_DMA_fn)(SPI_HandleTypeDef *, const uint8_t *, uint8_t *, uint16_t);
+
+typedef struct{
+	SPI_TxCpltCallback_fn 			spi_tx_cb;
+	SPI_TxRxCpltCallback_fn 		spi_txrx_cb;
+	GPIO_WritePin_fn 				gpio_write;
+	SPI_Transmit_DMA_fn 			spi_tx_dma;
+	SPI_TransmitReceive_DMA_fn 		spi_txrx_dma;
+}ADXL345_Interface;
+
+
+void ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
+void ADXL_SetMeasure(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
+void ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size,ADXL345_Interface *Env);
+void ADXL_SetRange(ADXL345Data *Device, uint8_t Range,ADXL345_Interface *Env);
+void ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env);
+void ADXL_SetJustify(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
+uint8_t ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env);
+void ADXL_SetOffset(ADXL345Data *Device, uint8_t offX, uint8_t offY, uint8_t offZ,ADXL345_Interface *Env);
+void ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 
 #endif /* INC_ADXL345_H_ */

@@ -1,5 +1,4 @@
 #include "../Adxl345DriverTest.h"
-typedef struct
-{
-    uint16_t addr;
+typedef struct{
+    uint32_t *addr;
 }GPIO_TypeDef;
