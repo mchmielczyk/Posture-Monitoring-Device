@@ -10,16 +10,6 @@
 
 #include <stdint.h>
 
-#ifdef FLAG_TEST_F_
-#include "fake_spi.h"
-#include "fake_gpio.h"
-#include "fake_hal.h"
-#else
-#include "spi.h"
-#include "gpio.h"
-#endif
-
-
 
 #define ADXL345_DEVID 				0x00 //Device ID
 #define ADXL345_THRESH_TAP 			0x1D //Tap threshold
@@ -74,29 +64,26 @@ uint8_t 							DATAZ1;
 uint16_t 							DATAX;
 uint16_t 							DATAY;
 uint16_t 							DATAZ;
-GPIO_TypeDef*						PORT;
+void*								PORT;
 uint16_t 							PIN;
 char 								name[3];
 }ADXL345Data;
 
-typedef void 						(*SPI_TxCpltCallback_fn)(SPI_HandleTypeDef *);
-typedef void 						(*SPI_TxRxCpltCallback_fn)(SPI_HandleTypeDef *);
-typedef void 						(*GPIO_WritePin_fn)(GPIO_TypeDef*, uint16_t, GPIO_PinState);
-typedef HAL_StatusTypeDef 			(*SPI_Transmit_DMA_fn)(SPI_HandleTypeDef*, const uint8_t *, uint16_t);
-typedef HAL_StatusTypeDef 			(*SPI_TransmitReceive_DMA_fn)(SPI_HandleTypeDef *, const uint8_t *, uint8_t *, uint16_t);
+typedef void 						(*GPIO_WritePin_fn)(ADXL345Data *Device);
+typedef void 						(*SPI_Transmit_fn)(uint8_t* tx,uint16_t size);
+typedef void 						(*SPI_TransmitReceive_fn)(uint8_t* tx,uint8_t*rx,uint16_t size);
 
 typedef struct{
-	SPI_TxCpltCallback_fn 			spi_tx_cb;
-	SPI_TxRxCpltCallback_fn 		spi_txrx_cb;
-	GPIO_WritePin_fn 				gpio_write;
-	SPI_Transmit_DMA_fn 			spi_tx_dma;
-	SPI_TransmitReceive_DMA_fn 		spi_txrx_dma;
+	GPIO_WritePin_fn 				cs_high;
+	GPIO_WritePin_fn 				cs_low;
+	SPI_Transmit_fn 				spi_tx;
+	SPI_TransmitReceive_fn 			spi_txrx;
 }ADXL345_Interface;
 
 
 void ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 void ADXL_SetMeasure(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
-void ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size,ADXL345_Interface *Env);
+void ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);
 void ADXL_SetRange(ADXL345Data *Device, uint8_t Range,ADXL345_Interface *Env);
 void ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env);
 void ADXL_SetJustify(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);

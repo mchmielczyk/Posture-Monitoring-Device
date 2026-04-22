@@ -5,6 +5,8 @@
  *      Author: Michał
  */
 #include "adxl345.h"
+#include "spi.h"
+#include "gpio.h"
 
 void ADXL_RawData(ADXL345Data *Device[], char*Dest, uint8_t Size)
 {

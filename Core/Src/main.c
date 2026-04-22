@@ -62,6 +62,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 volatile uint8_t dmaStatus=0,rtcStatus=0;
 char buffer[100];
+extern ADXL345_Interface *STM32_ENV;
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart==&huart2)
@@ -115,11 +116,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
 	for(int i=0;i<5;i++)
 	{
-		ADXL_SetMeasure(devicesPtr[i], ADXL345_RESET);
-		ADXL_SetFullResolution(devicesPtr[i]);
-		ADXL_SetRange(devicesPtr[i], RANGE_16G);
-		ADXL_SetJustify(devicesPtr[i], ADXL345_RESET);
-		ADXL_SetMeasure(devicesPtr[i], ADXL345_SET);
+		ADXL_SetMeasure(devicesPtr[i], ADXL345_RESET,STM32_ENV);
+		ADXL_SetFullResolution(devicesPtr[i],STM32_ENV);
+		ADXL_SetRange(devicesPtr[i], RANGE_16G,STM32_ENV);
+		ADXL_SetJustify(devicesPtr[i], ADXL345_RESET,STM32_ENV);
+		ADXL_SetMeasure(devicesPtr[i], ADXL345_SET,STM32_ENV);
 	}
 	HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 42, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
 	while (1)
@@ -130,11 +131,11 @@ int main(void)
 			if(!dmaStatus)
 			{
 				dmaStatus=1;
-				ADXL_MultiReadDevice(devicesPtr[0]);
-				ADXL_MultiReadDevice(devicesPtr[1]);
-				ADXL_MultiReadDevice(devicesPtr[2]);
-				ADXL_MultiReadDevice(devicesPtr[3]);
-				ADXL_MultiReadDevice(devicesPtr[4]);
+				ADXL_MultiReadDevice(devicesPtr[0],STM32_ENV);
+				ADXL_MultiReadDevice(devicesPtr[1],STM32_ENV);
+				ADXL_MultiReadDevice(devicesPtr[2],STM32_ENV);
+				ADXL_MultiReadDevice(devicesPtr[3],STM32_ENV);
+				ADXL_MultiReadDevice(devicesPtr[4],STM32_ENV);
 				ADXL_RawData(devicesPtr, buffer, 100);
 				HAL_UART_Transmit_DMA(&huart2, (uint8_t*)buffer, strlen(buffer));
 			}

@@ -1,0 +1,12 @@
+../Core/Src/adxl345.c:16:13:adxl_write	1
+../Core/Src/adxl345.c:23:16:adxl_read	1
+../Core/Src/adxl345.c:31:13:adxl_multi_read	1
+../Core/Src/adxl345.c:41:6:ADXL_MultiReadDevice	1
+../Core/Src/adxl345.c:49:9:ADXL_CheckDevice	2
+../Core/Src/adxl345.c:61:6:ADXL_ReadDevice	1
+../Core/Src/adxl345.c:74:6:ADXL_DeviceDump	1
+../Core/Src/adxl345.c:86:6:ADXL_SetMeasure	2
+../Core/Src/adxl345.c:96:6:ADXL_SetRange	5
+../Core/Src/adxl345.c:120:6:ADXL_SetFullResolution	1
+../Core/Src/adxl345.c:126:6:ADXL_SetJustify	2
+../Core/Src/adxl345.c:135:6:ADXL_SetOffset	1
