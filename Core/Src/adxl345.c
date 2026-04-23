@@ -5,12 +5,12 @@
  *      Author: Michał Chmielczyk
  */
 
-//sprawdzenie poprawnego devid
-//odczyt z akcelerometrow
-//zapis do akcelerometrow
-//handlowanie braku dostepu do urzadzenia
-//return statusu zadania
-//rtos safety
+//sprawdzenie poprawnego devid +
+//odczyt z akcelerometrow -
+//zapis do akcelerometrow -
+//handlowanie braku dostepu do urzadzenia -
+//return statusu zadania -
+//rtos safety -
 #include "adxl345.h"
 
 void static adxl_write(ADXL345Data *Device, uint8_t reg,uint8_t value,ADXL345_Interface *Env)
@@ -49,7 +49,7 @@ void ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env)
 uint8_t ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env)
 {
 	uint8_t txrx = adxl_read(Device, ADXL345_DEVID, Env);
-	if(txrx)
+	if(txrx==0xE5)
 	{
 		return 1;
 	}

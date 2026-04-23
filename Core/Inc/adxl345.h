@@ -9,7 +9,7 @@
 #define INC_ADXL345_H_
 
 #include <stdint.h>
-
+#include <stdio.h>
 
 #define ADXL345_DEVID 				0x00 //Device ID
 #define ADXL345_THRESH_TAP 			0x1D //Tap threshold
