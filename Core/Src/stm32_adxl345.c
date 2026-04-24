@@ -40,19 +40,31 @@ void STM32_GPIO_WritePin_fn_high(ADXL345Data *Device)
 {
 	HAL_GPIO_WritePin(Device->PORT, Device->PIN, SET);
 }
-void STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
+ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
 {
 	spiStatus=1;
-	HAL_SPI_Transmit_DMA(&hspi2, tx, size);
+	HAL_StatusTypeDef halStatus=HAL_SPI_Transmit_DMA(&hspi2, tx, size);
 	while(spiStatus);
+	switch(halStatus){
+	case HAL_OK:return ADXL345_OK;
+	case HAL_BUSY:return ADXL345_BUSY;
+	case HAL_TIMEOUT:return ADXL345_TIMEOUT;
+	default: return ADXL345_ERROR;
+	}
+	return halStatus;
 }
-void STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size)
+ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size)
 {
 	spiStatus=1;
-	HAL_SPI_TransmitReceive_DMA(&hspi2, tx, rx, size);
+	HAL_StatusTypeDef halStatus=HAL_SPI_TransmitReceive_DMA(&hspi2, tx, rx, size);
 	while(spiStatus);
+	switch(halStatus){
+	case HAL_OK:return ADXL345_OK;
+	case HAL_BUSY:return ADXL345_BUSY;
+	case HAL_TIMEOUT:return ADXL345_TIMEOUT;
+	default: return ADXL345_ERROR;
+	}
 }
-
 ADXL345_Interface STM32_ENV={
 		.cs_high=STM32_GPIO_WritePin_fn_high,
 		.cs_low=STM32_GPIO_WritePin_fn_low,

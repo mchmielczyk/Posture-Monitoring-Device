@@ -53,6 +53,15 @@
 #define ADXL345_SINGLE_BYTE_READ	(0x01<<7)
 #define ADXL345_MULTI_BYTE_READ		((0x01<<7)|(0x01<<6))
 
+
+typedef enum
+{
+	ADXL345_OK       = 0x00,
+	ADXL345_ERROR    = 0x01,
+	ADXL345_BUSY     = 0x02,
+	ADXL345_TIMEOUT  = 0x03
+} ADXL345_Status;
+
 typedef struct
 {
 uint8_t 							DATAX0;
@@ -70,25 +79,27 @@ char 								name[3];
 }ADXL345Data;
 
 typedef void 						(*GPIO_WritePin_fn)(ADXL345Data *Device);
-typedef void 						(*SPI_Transmit_fn)(uint8_t* tx,uint16_t size);
-typedef void 						(*SPI_TransmitReceive_fn)(uint8_t* tx,uint8_t*rx,uint16_t size);
+typedef ADXL345_Status 				(*SPI_Transmit_fn)(uint8_t* tx,uint16_t size);
+typedef ADXL345_Status 				(*SPI_TransmitReceive_fn)(uint8_t* tx,uint8_t*rx,uint16_t size);
 
 typedef struct{
 	GPIO_WritePin_fn 				cs_high;
 	GPIO_WritePin_fn 				cs_low;
 	SPI_Transmit_fn 				spi_tx;
 	SPI_TransmitReceive_fn 			spi_txrx;
+	ADXL345_Status 					status_type;
 }ADXL345_Interface;
 
 
-void ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
-void ADXL_SetMeasure(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
-void ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);
-void ADXL_SetRange(ADXL345Data *Device, uint8_t Range,ADXL345_Interface *Env);
-void ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env);
-void ADXL_SetJustify(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
+
+ADXL345_Status ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetMeasure(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
+ADXL345_Status ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);
+ADXL345_Status ADXL_SetRange(ADXL345Data *Device, uint8_t Range,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetJustify(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
 uint8_t ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env);
-void ADXL_SetOffset(ADXL345Data *Device, uint8_t offX, uint8_t offY, uint8_t offZ,ADXL345_Interface *Env);
-void ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetOffset(ADXL345Data *Device, uint8_t offX, uint8_t offY, uint8_t offZ,ADXL345_Interface *Env);
+ADXL345_Status ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 
 #endif /* INC_ADXL345_H_ */

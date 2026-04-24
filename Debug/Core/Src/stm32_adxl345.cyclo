@@ -1,6 +1,6 @@
-../Core/Src/stm32_adxl345.c:22:6:HAL_SPI_TxCpltCallback	2
-../Core/Src/stm32_adxl345.c:29:6:HAL_SPI_TxRxCpltCallback	2
-../Core/Src/stm32_adxl345.c:36:6:STM32_GPIO_WritePin_fn_low	1
-../Core/Src/stm32_adxl345.c:40:6:STM32_GPIO_WritePin_fn_high	1
-../Core/Src/stm32_adxl345.c:44:6:STM32_SPI_Transmit_fn	2
-../Core/Src/stm32_adxl345.c:50:6:STM32_SPI_TransmitReceive_fn	2
+../Core/Src/stm32_adxl345.c:21:6:HAL_SPI_TxCpltCallback	2
+../Core/Src/stm32_adxl345.c:28:6:HAL_SPI_TxRxCpltCallback	2
+../Core/Src/stm32_adxl345.c:35:6:STM32_GPIO_WritePin_fn_low	1
+../Core/Src/stm32_adxl345.c:39:6:STM32_GPIO_WritePin_fn_high	1
+../Core/Src/stm32_adxl345.c:43:16:STM32_SPI_Transmit_fn	6
+../Core/Src/stm32_adxl345.c:56:16:STM32_SPI_TransmitReceive_fn	6
