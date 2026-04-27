@@ -5,7 +5,7 @@ TARGET = Adxl345DriverTest
 all: test
 test:
 	$(GCC) $(TARGET).c $(LIB) $(CFLAGS) -o $(TARGET)
-	./Adxl345DriverTest.exe
+	./Adxl345DriverTest.exe -v
 debug:
 	$(GCC) -g $(TARGET).c $(LIB) $(CFLAGS) -o $(TARGET)
 	gdb Adxl345DriverTest.exe

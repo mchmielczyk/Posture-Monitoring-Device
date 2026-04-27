@@ -19,12 +19,12 @@ void FAKE_GPIO_WritePin_fn_high(ADXL345Data *Device)
 }
 FAKE_ADXL345_Status FAKE_SPI_Transmit_fn(uint8_t *tx, uint16_t size)
 {
-	//FAKE_HAL_SPI_Transmit_DMA(&hspi2, tx, size);
+	return FAKE_ADXL345_OK;
 }
 FAKE_ADXL345_Status FAKE_SPI_TransmitReceive_fn(uint8_t *tx, uint8_t *rx, uint16_t size)
 {
 	
-	if (tx[0]==ADXL345_MULTI_BYTE_READ|ADXL345_DATAX0) // multi bit read
+	if ((tx[0]&(ADXL345_MULTI_BYTE_READ))==192) // multi bit read
 	{
 			rx[1]=0x02;
 			rx[2]=0x04;
@@ -58,6 +58,9 @@ FAKE_ADXL345_Status FAKE_SPI_TransmitReceive_fn(uint8_t *tx, uint8_t *rx, uint16
 			rx[1] = 0x0A;
 			return FAKE_ADXL345_OK;
 		case ADXL345_DATAZ1:
+			rx[1] = 0x0C;
+			return FAKE_ADXL345_OK;
+		case ADXL345_DATA_FORMAT:
 			rx[1] = 0x0C;
 			return FAKE_ADXL345_OK;
 		default:

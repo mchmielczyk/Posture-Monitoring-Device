@@ -81,6 +81,7 @@ char 								name[3];
 typedef void 						(*GPIO_WritePin_fn)(ADXL345Data *Device);
 typedef ADXL345_Status 				(*SPI_Transmit_fn)(uint8_t* tx,uint16_t size);
 typedef ADXL345_Status 				(*SPI_TransmitReceive_fn)(uint8_t* tx,uint8_t*rx,uint16_t size);
+typedef void 						(*ERR_RuntimeError)(const char * message, int parameter,const char * file, int line);
 
 typedef struct{
 	GPIO_WritePin_fn 				cs_high;
@@ -88,18 +89,19 @@ typedef struct{
 	SPI_Transmit_fn 				spi_tx;
 	SPI_TransmitReceive_fn 			spi_txrx;
 	ADXL345_Status 					status_type;
+	ERR_RuntimeError				err_runtime;
 }ADXL345_Interface;
 
 
 
 ADXL345_Status ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
-ADXL345_Status ADXL_SetMeasure(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetMeasure(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode);
 ADXL345_Status ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);
-ADXL345_Status ADXL_SetRange(ADXL345Data *Device, uint8_t Range,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetRange(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t Range);
 ADXL345_Status ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env);
-ADXL345_Status ADXL_SetJustify(ADXL345Data *Device, uint8_t mode,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetJustify(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode);
 uint8_t ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env);
-ADXL345_Status ADXL_SetOffset(ADXL345Data *Device, uint8_t offX, uint8_t offY, uint8_t offZ,ADXL345_Interface *Env);
+ADXL345_Status ADXL_SetOffset(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t offX, uint8_t offY, uint8_t offZ);
 ADXL345_Status ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 
 #endif /* INC_ADXL345_H_ */
