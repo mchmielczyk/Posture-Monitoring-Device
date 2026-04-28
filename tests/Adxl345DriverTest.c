@@ -57,11 +57,11 @@ TEST(ADXL345Driver, NoDeviceOrInterfaceMultiRead)
 }
 TEST(ADXL345Driver, SetRangeBoundaryCond)
 {
-    TEST_ASSERT_EQUAL(0, ADXL_SetRange(&Device,0,&FAKE_ENV));
-    TEST_ASSERT_EQUAL(0, ADXL_SetRange(&Device,3,&FAKE_ENV));
-    TEST_ASSERT_EQUAL(1, ADXL_SetRange(&Device,-1,&FAKE_ENV));
-    TEST_ASSERT_EQUAL(1, ADXL_SetRange(&Device,4,&FAKE_ENV));
-    TEST_ASSERT_EQUAL(1, ADXL_SetRange((ADXL345Data*)0,4,(ADXL345_Interface*)0));
+    TEST_ASSERT_EQUAL(0, ADXL_SetRange(&Device,&FAKE_ENV,0));
+    TEST_ASSERT_EQUAL(0, ADXL_SetRange(&Device,&FAKE_ENV,3));
+    TEST_ASSERT_EQUAL(1, ADXL_SetRange(&Device,&FAKE_ENV,-1));
+    TEST_ASSERT_EQUAL(1, ADXL_SetRange(&Device,&FAKE_ENV,4));
+    TEST_ASSERT_EQUAL(1, ADXL_SetRange((ADXL345Data*)0,(ADXL345_Interface*)0,4));
 }
 TEST(ADXL345Driver, DeviceDumpProper)
 {
@@ -82,4 +82,12 @@ TEST(ADXL345Driver, DeviceDumpBoundaryWrongInterface)
 {
     char buffer[100];
     TEST_ASSERT_EQUAL(1,ADXL_DeviceDump(&Device,(ADXL345_Interface*)0,sizeof(buffer)));
+}
+TEST(ADXL345Driver, SetFullResolutionProper)
+{
+    TEST_ASSERT_EQUAL(0,ADXL_SetFullResolution(&Device,&FAKE_ENV));
+}
+TEST(ADXL345Driver, SetFullResolutionBoundaryWrongInterface)
+{
+    TEST_ASSERT_EQUAL(1,ADXL_SetFullResolution(&Device,(ADXL345_Interface*)0));
 }

@@ -163,10 +163,13 @@ ADXL345_Status ADXL_SetRange(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t
 }
 ADXL345_Status ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env)//
 {
+	ADXL345_Status returnStatus;
+	if(!Device||!Env)return ADXL345_ERROR;
 	uint8_t rx;
-	adxl_read(Device,Env, ADXL345_DATA_FORMAT,&rx);
+	returnStatus = adxl_read(Device,Env, ADXL345_DATA_FORMAT,&rx);
 	uint8_t tx = rx|(0x01<<3);
-	adxl_write(Device,Env, ADXL345_DATA_FORMAT, tx);
+	returnStatus = adxl_write(Device,Env, ADXL345_DATA_FORMAT, tx);
+	return returnStatus;
 }
 ADXL345_Status ADXL_SetJustify(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode)//
 {

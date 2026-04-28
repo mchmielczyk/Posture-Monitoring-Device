@@ -10,9 +10,10 @@ TEST_GROUP_RUNNER(ADXL345Driver)
     RUN_TEST_CASE(ADXL345Driver, ReturnStatusMultiRead);
     RUN_TEST_CASE(ADXL345Driver, NoDeviceOrInterfaceMultiRead);
     RUN_TEST_CASE(ADXL345Driver, SetRangeBoundaryCond);
-    RUN_TEST_CASE(ADXL345Driver, DeviceDumpProper)
-    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryTooSmallBuffer)
-    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryWrongDevice)
-    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryWrongInterface)
-    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryWrongBufferSize)
+    RUN_TEST_CASE(ADXL345Driver, DeviceDumpProper);
+    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryTooSmallBuffer);
+    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryWrongDevice);
+    RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryWrongInterface);
+    RUN_TEST_CASE(ADXL345Driver, SetFullResolutionProper);
+    RUN_TEST_CASE(ADXL345Driver, SetFullResolutionBoundaryWrongInterface);
 }

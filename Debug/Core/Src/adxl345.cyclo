@@ -5,8 +5,8 @@
 ../Core/Src/adxl345.c:70:9:ADXL_CheckDevice	2
 ../Core/Src/adxl345.c:83:16:ADXL_ReadDevice	5
 ../Core/Src/adxl345.c:105:16:ADXL_DeviceDump	5
-../Core/Src/adxl345.c:124:16:ADXL_SetMeasure	2
-../Core/Src/adxl345.c:135:16:ADXL_SetRange	9
-../Core/Src/adxl345.c:165:16:ADXL_SetFullResolution	1
-../Core/Src/adxl345.c:172:16:ADXL_SetJustify	2
-../Core/Src/adxl345.c:183:16:ADXL_SetOffset	1
+../Core/Src/adxl345.c:123:16:ADXL_SetMeasure	2
+../Core/Src/adxl345.c:134:16:ADXL_SetRange	9
+../Core/Src/adxl345.c:164:16:ADXL_SetFullResolution	3
+../Core/Src/adxl345.c:174:16:ADXL_SetJustify	2
+../Core/Src/adxl345.c:185:16:ADXL_SetOffset	1
