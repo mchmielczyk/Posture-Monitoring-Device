@@ -16,4 +16,10 @@ TEST_GROUP_RUNNER(ADXL345Driver)
     RUN_TEST_CASE(ADXL345Driver, DeviceDumpBoundaryWrongInterface);
     RUN_TEST_CASE(ADXL345Driver, SetFullResolutionProper);
     RUN_TEST_CASE(ADXL345Driver, SetFullResolutionBoundaryWrongInterface);
+    RUN_TEST_CASE(ADXL345Driver, SetJustifyProper)
+    RUN_TEST_CASE(ADXL345Driver, SetJustifyBoundaryWrongInterface)
+    RUN_TEST_CASE(ADXL345Driver, SetJustifyBoundaryWrongMode)
+    RUN_TEST_CASE(ADXL345Driver, SetMeasureProper)
+    RUN_TEST_CASE(ADXL345Driver, SetMeasureBoundaryWrongInterface)
+    RUN_TEST_CASE(ADXL345Driver, SetMeasureBoundaryWrongMode)
 }

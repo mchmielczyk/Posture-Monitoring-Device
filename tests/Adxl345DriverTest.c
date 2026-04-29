@@ -91,3 +91,27 @@ TEST(ADXL345Driver, SetFullResolutionBoundaryWrongInterface)
 {
     TEST_ASSERT_EQUAL(1,ADXL_SetFullResolution(&Device,(ADXL345_Interface*)0));
 }
+TEST(ADXL345Driver, SetJustifyProper)
+{
+    TEST_ASSERT_EQUAL(0,ADXL_SetJustify(&Device,&FAKE_ENV,ADXL345_RESET));
+}
+TEST(ADXL345Driver, SetJustifyBoundaryWrongInterface)
+{
+    TEST_ASSERT_EQUAL(1,ADXL_SetJustify(&Device,(ADXL345_Interface*)0,ADXL345_RESET));
+}
+TEST(ADXL345Driver, SetJustifyBoundaryWrongMode)
+{
+    TEST_ASSERT_EQUAL(1,ADXL_SetJustify(&Device,(ADXL345_Interface*)0,-1));
+}
+TEST(ADXL345Driver, SetMeasureProper)
+{
+    TEST_ASSERT_EQUAL(0,ADXL_SetMeasure(&Device,&FAKE_ENV,ADXL345_RESET));
+}
+TEST(ADXL345Driver, SetMeasureBoundaryWrongInterface)
+{
+    TEST_ASSERT_EQUAL(1,ADXL_SetMeasure(&Device,(ADXL345_Interface*)0,ADXL345_RESET));
+}
+TEST(ADXL345Driver, SetMeasureBoundaryWrongMode)
+{
+    TEST_ASSERT_EQUAL(1,ADXL_SetMeasure(&Device,(ADXL345_Interface*)0,-1));
+}

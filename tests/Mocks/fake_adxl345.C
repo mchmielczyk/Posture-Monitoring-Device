@@ -63,6 +63,9 @@ FAKE_ADXL345_Status FAKE_SPI_TransmitReceive_fn(uint8_t *tx, uint8_t *rx, uint16
 		case ADXL345_DATA_FORMAT:
 			rx[1] = 0x0C;
 			return FAKE_ADXL345_OK;
+		case ADXL345_POWER_CTL:
+			rx[1] = 0x0C;
+			return FAKE_ADXL345_OK;
 		default:
 			rx[1] = 0x00;
 			return FAKE_ADXL345_ERROR;

@@ -122,14 +122,18 @@ ADXL345_Status ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size)
 }
 ADXL345_Status ADXL_SetMeasure(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode)//
 {
+	ADXL345_Status returnStatus;
+	if(!Device||!Env||(mode<0))return ADXL345_ERROR;
 	uint8_t rx;
-	adxl_read(Device,Env, ADXL345_POWER_CTL,&rx);
+	returnStatus = adxl_read(Device,Env, ADXL345_POWER_CTL,&rx);
+	if(returnStatus!=ADXL345_OK)return returnStatus;
 	uint8_t tx = rx&0xF7;
 	if(mode)
 	{
 		tx|=(0x01<<3);
 	}
-	adxl_write(Device,Env, ADXL345_POWER_CTL, tx);
+	returnStatus = adxl_write(Device,Env, ADXL345_POWER_CTL, tx);
+	return returnStatus;
 }
 ADXL345_Status ADXL_SetRange(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t Range)//
 {
@@ -161,26 +165,31 @@ ADXL345_Status ADXL_SetRange(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t
 		return ADXL345_ERROR;
 	}
 }
-ADXL345_Status ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env)//
+ADXL345_Status ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env)
 {
 	ADXL345_Status returnStatus;
 	if(!Device||!Env)return ADXL345_ERROR;
 	uint8_t rx;
 	returnStatus = adxl_read(Device,Env, ADXL345_DATA_FORMAT,&rx);
+	if(returnStatus!=ADXL345_OK)return returnStatus;
 	uint8_t tx = rx|(0x01<<3);
 	returnStatus = adxl_write(Device,Env, ADXL345_DATA_FORMAT, tx);
 	return returnStatus;
 }
-ADXL345_Status ADXL_SetJustify(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode)//
+ADXL345_Status ADXL_SetJustify(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode)
 {
+	ADXL345_Status returnStatus;
+	if(!Device||!Env||(mode<0))return ADXL345_ERROR;
 	uint8_t txrx;
-	adxl_read(Device,Env, ADXL345_DATA_FORMAT,&txrx);
+	returnStatus = adxl_read(Device,Env, ADXL345_DATA_FORMAT,&txrx);
+	if(returnStatus!=ADXL345_OK)return returnStatus;
 	txrx&=(0xFB);
 	if(mode)
 	{
 		txrx|=(0x01<<2);
 	}
-	adxl_write(Device,Env, ADXL345_DATA_FORMAT, txrx);
+	returnStatus = adxl_write(Device,Env, ADXL345_DATA_FORMAT, txrx);
+	return returnStatus;
 }
 ADXL345_Status ADXL_SetOffset(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t offX, uint8_t offY, uint8_t offZ)//
 {
