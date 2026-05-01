@@ -92,8 +92,6 @@ typedef struct{
 	ERR_RuntimeError				err_runtime;
 }ADXL345_Interface;
 
-
-
 ADXL345_Status ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 ADXL345_Status ADXL_SetMeasure(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode);
 ADXL345_Status ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);

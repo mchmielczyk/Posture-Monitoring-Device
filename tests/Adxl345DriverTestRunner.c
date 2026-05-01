@@ -22,4 +22,7 @@ TEST_GROUP_RUNNER(ADXL345Driver)
     RUN_TEST_CASE(ADXL345Driver, SetMeasureProper)
     RUN_TEST_CASE(ADXL345Driver, SetMeasureBoundaryWrongInterface)
     RUN_TEST_CASE(ADXL345Driver, SetMeasureBoundaryWrongMode)
+    RUN_TEST_CASE(ADXL345Driver, SetOffsetProper)
+    RUN_TEST_CASE(ADXL345Driver, SetOffsetBoundaryWrongInterface)
+    RUN_TEST_CASE(ADXL345Driver, SetOffsetBoundaryWrongData)
 }

@@ -115,3 +115,15 @@ TEST(ADXL345Driver, SetMeasureBoundaryWrongMode)
 {
     TEST_ASSERT_EQUAL(1,ADXL_SetMeasure(&Device,(ADXL345_Interface*)0,-1));
 }
+TEST(ADXL345Driver, SetOffsetProper)
+{
+    TEST_ASSERT_EQUAL(0,ADXL_SetOffset(&Device,&FAKE_ENV,1,1,1));
+}
+TEST(ADXL345Driver, SetOffsetBoundaryWrongInterface)
+{
+    TEST_ASSERT_EQUAL(1,ADXL_SetOffset(&Device,(ADXL345_Interface*)0,1,1,1));
+}
+TEST(ADXL345Driver, SetOffsetBoundaryWrongData)
+{
+    TEST_ASSERT_EQUAL(0,ADXL_SetOffset(&Device,&FAKE_ENV,-1,-1,-1));
+}

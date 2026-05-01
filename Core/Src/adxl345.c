@@ -5,17 +5,6 @@
  *      Author: Michał Chmielczyk
  */
 
-//sprawdzenie poprawnego devid +
-//odczyt z akcelerometrow +
-//zapis do akcelerometrow -
-//handlowanie braku dostepu do urzadzenia -
-//return statusu zadania -
-//rtos safety -
-//justify bound
-//check device bound
-// device dump bound
-//set meaesure bound
-// res offset justify bound
 #include "adxl345.h"
 ADXL345_Status static adxl_write(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t reg,uint8_t value)
 {
@@ -193,7 +182,12 @@ ADXL345_Status ADXL_SetJustify(ADXL345Data *Device,ADXL345_Interface *Env, uint8
 }
 ADXL345_Status ADXL_SetOffset(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t offX, uint8_t offY, uint8_t offZ)//
 {
-	adxl_write(Device,Env, ADXL345_OFSX, offX);
-	adxl_write(Device,Env, ADXL345_OFSY, offY);
-	adxl_write(Device,Env, ADXL345_OFSZ, offZ);
+	ADXL345_Status returnStatus;
+	if(!Device||!Env)return ADXL345_ERROR;
+	returnStatus = adxl_write(Device,Env, ADXL345_OFSX, offX);
+	if(returnStatus!=ADXL345_OK)return returnStatus;
+	returnStatus = adxl_write(Device,Env, ADXL345_OFSY, offY);
+	if(returnStatus!=ADXL345_OK)return returnStatus;
+	returnStatus = adxl_write(Device,Env, ADXL345_OFSZ, offZ);
+	return returnStatus;
 }
