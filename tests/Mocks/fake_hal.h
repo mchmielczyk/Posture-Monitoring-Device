@@ -1,4 +1,6 @@
-#include "../Adxl345DriverTest.h"
+#include "../../Core/Inc/adxl345.h"
+#include <stdint.h>
+#include <stdio.h>
 //typedef struct{} FAKE_Status_TypeDef;
 //typedef struct{} FAKE_SPI_Handle;
 
