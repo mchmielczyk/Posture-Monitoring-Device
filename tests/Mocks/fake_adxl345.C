@@ -1,5 +1,4 @@
 #include "fake_hal.h"
-
 void FAKE_GPIO_WritePin_fn_low(ADXL345Data *Device)
 {
 	// FAKE_HAL_GPIO_WritePin(Device->PORT, Device->PIN, ADXL345_RESET);
@@ -14,7 +13,7 @@ ADXL345_Status FAKE_SPI_Transmit_fn(uint8_t *tx, uint16_t size)
 }
 ADXL345_Status FAKE_SPI_TransmitReceive_fn(uint8_t *tx, uint8_t *rx, uint16_t size)
 {
-	
+	ADXL345Spy_SetLastRead(*rx);
 	if ((tx[0]&(ADXL345_MULTI_BYTE_READ))==192) // multi bit read
 	{
 			rx[1]=0x02;

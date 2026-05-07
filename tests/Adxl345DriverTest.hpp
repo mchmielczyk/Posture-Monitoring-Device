@@ -1,3 +1,5 @@
+#ifndef _ADXL345_TEST_H_
+#define _ADXL345_TEST_H_
 #include "cpputest/include/CppUTest/TestHarness.h"
 #include <stdexcept>
 extern "C"{
@@ -5,3 +7,4 @@ extern "C"{
 #include "stdio.h"
 #include "stdint.h"
 }
+#endif

@@ -1,6 +1,7 @@
 #include "Adxl345DriverTest.hpp"
 extern "C"
 {
+#include "Mocks/adxl345spy.h"
 extern ADXL345_Interface FAKE_ENV;
 }
 TEST_GROUP(ADXL345Driver)
@@ -15,7 +16,7 @@ void setup()
     Device = (ADXL345Data){0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,(void*)TEST_CS_GPIO_PORT,TEST_CS_PIN};
     strcpy(Device.name,"LAR");
 }
-void teradown()
+void teardown()
 {
 
 }
@@ -126,4 +127,9 @@ TEST(ADXL345Driver, SetOffsetBoundaryWrongInterface)
 TEST(ADXL345Driver, SetOffsetBoundaryWrongData)
 {
     LONGS_EQUAL(0,ADXL_SetOffset(&Device,&FAKE_ENV,-1,-1,-1));
+}
+TEST(ADXL345Driver, CheckDeviceProperCall)
+{
+    LONGS_EQUAL(1,ADXL_CheckDevice(&Device,&FAKE_ENV));
+    LONGS_EQUAL(128,ADXL345Spy_GetLastRead());
 }
