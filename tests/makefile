@@ -1,13 +1,24 @@
-GCC = gcc
-CFLAGS = -Wall -pedantic
-LIB = Adxl345DriverTestRunner.c AllTests.c ../Core/Src/adxl345.c Mocks/fake_adxl345.c -IUnity/src Unity/src/unity.c -IUnity/extras/fixture/src Unity/extras/fixture/src/unity_fixture.c -IUnity/extras/memory/src -I../Core/Inc -IMocks
-TARGET = Adxl345DriverTest
-all: test
-test:
-	$(GCC) $(TARGET).c $(LIB) $(CFLAGS) -o $(TARGET)
-	./Adxl345DriverTest.exe -v
-debug:
-	$(GCC) -g $(TARGET).c $(LIB) $(CFLAGS) -o $(TARGET)
-	gdb Adxl345DriverTest.exe
-clean:
-	rm -f $(TARGET).exe
+CC = gcc
+CXX = g++
+CFLAGS = -Wall -Wpedantic -I../Core/Inc -Icpputest/include -IMocks
+CXXFLAGS = -Wall -Wpedantic -I../Core/Inc -Icpputest/include -IMocks
+LIB_DIR = -Lcpputest/cpputest_build/src/CppUTest
+LIBS = -lCppUTest
+
+C_SOURCES = ../Core/Src/adxl345.c Mocks/fake_adxl345.c Mocks/adxl345spy.c 
+CPP_SOURCES = AllTests.cpp Adxl345DriverTest.cpp Adxl345DriverTestSpy.cpp
+
+C_OBJS = $(C_SOURCES:.c=.o)
+CPP_OBJS = $(CPP_SOURCES:.cpp=.o)
+
+all: AllTests
+
+AllTests: $(C_OBJS) $(CPP_OBJS)
+	$(CXX) $(CPP_OBJS) $(C_OBJS) $(LIB_DIR) $(LIBS) -o $@
+	./$@.exe -v
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
