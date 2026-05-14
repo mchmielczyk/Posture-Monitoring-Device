@@ -98,7 +98,7 @@ ADXL345_Status ADXL_DeviceDump(ADXL345Data *Device, char *Dest, uint8_t Size);
 ADXL345_Status ADXL_SetRange(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t Range);
 ADXL345_Status ADXL_SetFullResolution(ADXL345Data *Device,ADXL345_Interface *Env);
 ADXL345_Status ADXL_SetJustify(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t mode);
-uint8_t ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env);
+ADXL345_Status ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 ADXL345_Status ADXL_SetOffset(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t offX, uint8_t offY, uint8_t offZ);
 ADXL345_Status ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env);
 

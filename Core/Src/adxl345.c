@@ -56,17 +56,20 @@ ADXL345_Status ADXL_MultiReadDevice(ADXL345Data *Device,ADXL345_Interface *Env)
 	Device->DATAZ=axes[2];
 	return returnStatus;
 }
-uint8_t ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env)
+ADXL345_Status ADXL_CheckDevice(ADXL345Data *Device,ADXL345_Interface *Env)
 {
+	ADXL345_Status returnStatus;
+	if(!Device||!Env)return ADXL345_ERROR;
 	uint8_t txrx;
-	adxl_read(Device,Env, ADXL345_DEVID,&txrx);
+	returnStatus = adxl_read(Device,Env, ADXL345_DEVID,&txrx);
+	if(returnStatus!=ADXL345_OK)return returnStatus;
 	if(txrx==0xE5)
 	{
-		return 1;
+		return ADXL345_OK;
 	}
 	else
 	{
-		return 0;
+		return ADXL345_ERROR;
 	}
 }
 ADXL345_Status ADXL_ReadDevice(ADXL345Data *Device,ADXL345_Interface *Env)
