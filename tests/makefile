@@ -2,8 +2,8 @@ CC = gcc
 CXX = g++
 CFLAGS = -Wall -Wpedantic -I../Core/Inc -Icpputest/include -IMocks
 CXXFLAGS = -Wall -Wpedantic -I../Core/Inc -Icpputest/include -IMocks
-LIB_DIR = -Lcpputest/cpputest_build/src/CppUTest
-LIBS = -lCppUTest
+LIB_DIR = -Lcpputest/cpputest_build/src/CppUTest -Lcpputest/cpputest_build/src/CppUTestExt
+LIBS = -lCppUTest -lCppUTestExt
 
 C_SOURCES = ../Core/Src/adxl345.c Mocks/fake_adxl345.c Mocks/adxl345spy.c 
 CPP_SOURCES = AllTests.cpp Adxl345DriverTest.cpp Adxl345DriverTestSpy.cpp

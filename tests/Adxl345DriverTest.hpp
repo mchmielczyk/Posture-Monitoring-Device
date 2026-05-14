@@ -1,6 +1,7 @@
 #ifndef _ADXL345_TEST_H_
 #define _ADXL345_TEST_H_
 #include "cpputest/include/CppUTest/TestHarness.h"
+#include "cpputest/include/CppUTestExt/MockSupport.h"
 #include <stdexcept>
 extern "C"{
 #include "../Core/Inc/adxl345.h"

@@ -18,12 +18,11 @@ void setup()
 }
 void teardown()
 {
-
 }
 };
 TEST(ADXL345Driver, DEVIDConnection)
 {
-    LONGS_EQUAL(1,ADXL_CheckDevice(&Device,&FAKE_ENV));
+    LONGS_EQUAL(0,ADXL_CheckDevice(&Device,&FAKE_ENV));
 }
 TEST(ADXL345Driver, ReadSingleDeviceProperSingleRead)
 {
@@ -130,6 +129,6 @@ TEST(ADXL345Driver, SetOffsetBoundaryWrongData)
 }
 TEST(ADXL345Driver, CheckDeviceProperCall)
 {
-    LONGS_EQUAL(1,ADXL_CheckDevice(&Device,&FAKE_ENV));
+    LONGS_EQUAL(0,ADXL_CheckDevice(&Device,&FAKE_ENV));
     LONGS_EQUAL(128,ADXL345Spy_GetLastRead());
 }

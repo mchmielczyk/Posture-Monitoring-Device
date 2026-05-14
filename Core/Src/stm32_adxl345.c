@@ -5,12 +5,6 @@
  *      Author: Michał Chmielczyk
  */
 
-//sprawdzenie poprawnego devid
-//odczyt z akcelerometrow
-//zapis do akcelerometrow
-//handlowanie braku dostepu do urzadzenia
-//return statusu zadania
-//rtos safety
 #include "adxl345.h"
 #include "spi.h"
 #include "gpio.h"
@@ -51,7 +45,6 @@ ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
 	case HAL_TIMEOUT:return ADXL345_TIMEOUT;
 	default: return ADXL345_ERROR;
 	}
-	return halStatus;
 }
 ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size)
 {
