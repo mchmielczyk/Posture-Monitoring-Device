@@ -10,7 +10,7 @@
 #include "gpio.h"
 
 
-volatile uint8_t spiStatus=0;
+static volatile uint8_t spiStatus=0;
 
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
@@ -26,15 +26,15 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
         spiStatus = 0;
     }
 }
-void STM32_GPIO_WritePin_fn_low(ADXL345Data *Device)
+static void STM32_GPIO_WritePin_fn_low(ADXL345Data *Device)
 {
 	HAL_GPIO_WritePin(Device->PORT, Device->PIN, RESET);
 }
-void STM32_GPIO_WritePin_fn_high(ADXL345Data *Device)
+static void STM32_GPIO_WritePin_fn_high(ADXL345Data *Device)
 {
 	HAL_GPIO_WritePin(Device->PORT, Device->PIN, SET);
 }
-ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
+static ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
 {
 	spiStatus=1;
 	HAL_StatusTypeDef halStatus=HAL_SPI_Transmit_DMA(&hspi2, tx, size);
@@ -46,7 +46,7 @@ ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
 	default: return ADXL345_ERROR;
 	}
 }
-ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size)
+static ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size)
 {
 	spiStatus=1;
 	HAL_StatusTypeDef halStatus=HAL_SPI_TransmitReceive_DMA(&hspi2, tx, rx, size);
@@ -58,9 +58,14 @@ ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size
 	default: return ADXL345_ERROR;
 	}
 }
-ADXL345_Interface STM32_ENV={
+static ADXL345_Interface STM32_ENV={
 		.cs_high=STM32_GPIO_WritePin_fn_high,
 		.cs_low=STM32_GPIO_WritePin_fn_low,
 		.spi_tx=STM32_SPI_Transmit_fn,
 		.spi_txrx=STM32_SPI_TransmitReceive_fn
 };
+
+ADXL345_Interface * GetSTM32Interface(void)
+{
+	return &STM32_ENV;
+}
