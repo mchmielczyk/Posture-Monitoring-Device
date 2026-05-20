@@ -130,7 +130,7 @@ ADXL345_Status ADXL_SetMeasure(ADXL345Data *Device,ADXL345_Interface *Env, uint8
 ADXL345_Status ADXL_SetRange(ADXL345Data *Device,ADXL345_Interface *Env, uint8_t Range)//
 {
 	ADXL345_Status returnStatus;
-	if((!Device||!Env)||(Range<0||Range>3))return ADXL345_ERROR;
+	if((!Device)||(!Env)||(Range>3))return ADXL345_ERROR;
 	uint8_t rx;
 	returnStatus = adxl_read(Device,Env, ADXL345_DATA_FORMAT,&rx);
 	if(returnStatus!=ADXL345_OK)return returnStatus;

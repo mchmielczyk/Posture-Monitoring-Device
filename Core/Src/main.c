@@ -62,7 +62,6 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 volatile uint8_t dmaStatus=0,rtcStatus=0;
 char buffer[100];
-extern ADXL345_Interface *STM32_ENV;
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart==&huart2)
@@ -84,6 +83,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
+  ADXL345_Interface *STM32_ENV = (ADXL345_Interface*)GetSTM32Interface();
 
   /* USER CODE END 1 */
 
