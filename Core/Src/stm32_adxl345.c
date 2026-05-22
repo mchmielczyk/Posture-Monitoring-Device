@@ -6,66 +6,75 @@
  */
 
 #include "adxl345.h"
-#include "spi.h"
 #include "gpio.h"
+#include "spi.h"
 
+static volatile uint8_t spiStatus = 0;
 
-static volatile uint8_t spiStatus=0;
-
-void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
-{
-	if (hspi == &hspi2)
-	{
-		spiStatus=0;
-	}
-}
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef* hspi)
 {
     if (hspi == &hspi2)
     {
         spiStatus = 0;
     }
 }
-static void STM32_GPIO_WritePin_fn_low(ADXL345Data *Device)
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef* hspi)
 {
-	HAL_GPIO_WritePin(Device->PORT, Device->PIN, RESET);
+    if (hspi == &hspi2)
+    {
+        spiStatus = 0;
+    }
 }
-static void STM32_GPIO_WritePin_fn_high(ADXL345Data *Device)
+static void STM32_GPIO_WritePin_fn_low(ADXL345Data* Device)
 {
-	HAL_GPIO_WritePin(Device->PORT, Device->PIN, SET);
+    HAL_GPIO_WritePin(Device->PORT, Device->PIN, RESET);
 }
-static ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx,uint16_t size)
+static void STM32_GPIO_WritePin_fn_high(ADXL345Data* Device)
 {
-	spiStatus=1;
-	HAL_StatusTypeDef halStatus=HAL_SPI_Transmit_DMA(&hspi2, tx, size);
-	while(spiStatus);
-	switch(halStatus){
-	case HAL_OK:return ADXL345_OK;
-	case HAL_BUSY:return ADXL345_BUSY;
-	case HAL_TIMEOUT:return ADXL345_TIMEOUT;
-	default: return ADXL345_ERROR;
-	}
+    HAL_GPIO_WritePin(Device->PORT, Device->PIN, SET);
 }
-static ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx,uint8_t*rx,uint16_t size)
+static ADXL345_Status STM32_SPI_Transmit_fn(uint8_t* tx, uint16_t size)
 {
-	spiStatus=1;
-	HAL_StatusTypeDef halStatus=HAL_SPI_TransmitReceive_DMA(&hspi2, tx, rx, size);
-	while(spiStatus);
-	switch(halStatus){
-	case HAL_OK:return ADXL345_OK;
-	case HAL_BUSY:return ADXL345_BUSY;
-	case HAL_TIMEOUT:return ADXL345_TIMEOUT;
-	default: return ADXL345_ERROR;
-	}
+    spiStatus = 1;
+    HAL_StatusTypeDef halStatus = HAL_SPI_Transmit_DMA(&hspi2, tx, size);
+    while (spiStatus)
+        ;
+    switch (halStatus)
+    {
+    case HAL_OK:
+        return ADXL345_OK;
+    case HAL_BUSY:
+        return ADXL345_BUSY;
+    case HAL_TIMEOUT:
+        return ADXL345_TIMEOUT;
+    default:
+        return ADXL345_ERROR;
+    }
 }
-static ADXL345_Interface STM32_ENV={
-		.cs_high=STM32_GPIO_WritePin_fn_high,
-		.cs_low=STM32_GPIO_WritePin_fn_low,
-		.spi_tx=STM32_SPI_Transmit_fn,
-		.spi_txrx=STM32_SPI_TransmitReceive_fn
-};
+static ADXL345_Status STM32_SPI_TransmitReceive_fn(uint8_t* tx, uint8_t* rx, uint16_t size)
+{
+    spiStatus = 1;
+    HAL_StatusTypeDef halStatus = HAL_SPI_TransmitReceive_DMA(&hspi2, tx, rx, size);
+    while (spiStatus)
+        ;
+    switch (halStatus)
+    {
+    case HAL_OK:
+        return ADXL345_OK;
+    case HAL_BUSY:
+        return ADXL345_BUSY;
+    case HAL_TIMEOUT:
+        return ADXL345_TIMEOUT;
+    default:
+        return ADXL345_ERROR;
+    }
+}
+static ADXL345_Interface STM32_ENV = {.cs_high = STM32_GPIO_WritePin_fn_high,
+                                      .cs_low = STM32_GPIO_WritePin_fn_low,
+                                      .spi_tx = STM32_SPI_Transmit_fn,
+                                      .spi_txrx = STM32_SPI_TransmitReceive_fn};
 
-ADXL345_Interface * GetSTM32Interface(void)
+ADXL345_Interface* GetSTM32Interface(void)
 {
-	return &STM32_ENV;
+    return &STM32_ENV;
 }
