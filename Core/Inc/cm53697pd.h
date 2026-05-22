@@ -17,6 +17,7 @@ ADXL345Data AdxlRFO = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,RFO_CS_GPIO_
 ADXL345Data AdxlBAC = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,BAC_CS_GPIO_Port,BAC_CS_Pin,"BAC"};
 
 ADXL345Data *devicesPtr[5] = {&AdxlLAR,&AdxlRAR,&AdxlLFO,&AdxlRFO,&AdxlBAC};
+ADXL345Driver *driverPtr[5];
 
 void ADXL_RawData(ADXL345Data *Device[], char*Dest, uint8_t Size);
 void DWT_CycleStart(void);
