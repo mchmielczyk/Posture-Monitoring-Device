@@ -53,6 +53,9 @@
 #define ADXL345_SINGLE_BYTE_READ (0x01 << 7)
 #define ADXL345_MULTI_BYTE_READ ((0x01 << 7) | (0x01 << 6))
 
+#define adxl345_spi_tx_flag 1U
+#define adxl345_spi_txrx_flag 2U
+
 typedef enum
 {
     ADXL345_OK = 0x00,

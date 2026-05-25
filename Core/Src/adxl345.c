@@ -6,6 +6,7 @@
  */
 
 #include "adxl345.h"
+
 /**
  * @brief Ensures that provided register address is in ADXL345 bounds.
  *
@@ -13,16 +14,16 @@
  *
  * @param[in] reg register address to be validated
  *
- * @return ADXL345_RESET (0U) if register is valid
- * @return ADXL345_SET (1U) otherwise
+ * @return ADXL345_OK (0U) if register is valid
+ * @return ADXL345_ERROR (1U) otherwise
  */
-static uint8_t adxl_valid_register(uint8_t reg)
+static inline ADXL345_Status adxl_valid_register(uint8_t reg)
 {
-    uint8_t result = ADXL345_RESET;
+    ADXL345_Status result = ADXL345_ERROR;
 
     if ((reg == 0U) || ((reg >= ADXL345_THRESH_TAP) && (reg <= ADXL345_FIFO_STATUS)))
     {
-        result = ADXL345_SET;
+        result = ADXL345_OK;
     }
 
     return result;
@@ -33,7 +34,7 @@ static uint8_t adxl_valid_register(uint8_t reg)
  * Validates driver, interface and register address before
  * data transfer via SPI.
  *
- * @param[in] Driver pointer to ADXL345Driver instance.
+ * @param[in] driver pointer to ADXL345Driver instance.
  * @param[in] reg register address.
  * @param[in] value value to be written.
  *
@@ -42,19 +43,19 @@ static uint8_t adxl_valid_register(uint8_t reg)
  *
  * @note Function handle SPI CS line using interface callbacks.
  */
-static ADXL345_Status adxl_write(ADXL345Driver* Driver, uint8_t reg, uint8_t value)
+static ADXL345_Status adxl_write(ADXL345Driver* driver, uint8_t reg, uint8_t value)
 {
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (Driver == NULL || (Driver->device) == NULL || (Driver->iface) == NULL)
+    if (driver == NULL || (driver->device) == NULL || (driver->iface) == NULL)
     {
         returnStatus = ADXL345_ERROR;
     }
 
     if (returnStatus == ADXL345_OK)
     {
-        if (Driver->iface->cs_high == NULL || (Driver->iface->cs_low) == NULL ||
-            (Driver->iface->spi_tx) == NULL)
+        if (driver->iface->cs_high == NULL || (driver->iface->cs_low) == NULL ||
+            (driver->iface->spi_tx) == NULL)
         {
             returnStatus = ADXL345_ERROR;
         }
@@ -62,7 +63,7 @@ static ADXL345_Status adxl_write(ADXL345Driver* Driver, uint8_t reg, uint8_t val
 
     if (returnStatus == ADXL345_OK)
     {
-        if (adxl_valid_register(reg) == ADXL345_RESET)
+        if (adxl_valid_register(reg) != ADXL345_OK)
         {
             returnStatus = ADXL345_ERROR;
         }
@@ -71,9 +72,9 @@ static ADXL345_Status adxl_write(ADXL345Driver* Driver, uint8_t reg, uint8_t val
     if (returnStatus == ADXL345_OK)
     {
         uint8_t tx[2U] = {reg, value};
-        Driver->iface->cs_low(Driver->device);
-        returnStatus = Driver->iface->spi_tx(tx, 2U);
-        Driver->iface->cs_high(Driver->device);
+        driver->iface->cs_low(driver->device);
+        returnStatus = driver->iface->spi_tx(tx, 2U);
+        driver->iface->cs_high(driver->device);
     }
 
     return returnStatus;
@@ -84,7 +85,7 @@ static ADXL345_Status adxl_write(ADXL345Driver* Driver, uint8_t reg, uint8_t val
  * Validates driver, interface and register address before
  * data transfer and receive via SPI.
  *
- * @param[in] Driver pointer to ADXL345Driver instance.
+ * @param[in] driver pointer to ADXL345Driver instance.
  * @param[in] reg register address.
  * @param[in] dest pointer to read value destination
  *
@@ -93,20 +94,20 @@ static ADXL345_Status adxl_write(ADXL345Driver* Driver, uint8_t reg, uint8_t val
  *
  * @note Function handle SPI CS line using interface callbacks.
  */
-static ADXL345_Status adxl_read(ADXL345Driver* Driver, uint8_t reg, uint8_t* dest)
+static ADXL345_Status adxl_read(ADXL345Driver* driver, uint8_t reg, uint8_t* dest)
 {
 
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (Driver == NULL || (Driver->device) == NULL || (Driver->iface) == NULL || (dest == NULL))
+    if (driver == NULL || (driver->device) == NULL || (driver->iface) == NULL || (dest == NULL))
     {
         returnStatus = ADXL345_ERROR;
     }
 
     if (returnStatus == ADXL345_OK)
     {
-        if (Driver->iface->cs_high == NULL || (Driver->iface->cs_low) == NULL ||
-            (Driver->iface->spi_txrx) == NULL)
+        if (driver->iface->cs_high == NULL || (driver->iface->cs_low) == NULL ||
+            (driver->iface->spi_txrx) == NULL)
         {
             returnStatus = ADXL345_ERROR;
         }
@@ -114,7 +115,7 @@ static ADXL345_Status adxl_read(ADXL345Driver* Driver, uint8_t reg, uint8_t* des
 
     if (returnStatus == ADXL345_OK)
     {
-        if (adxl_valid_register(reg) == ADXL345_RESET)
+        if (adxl_valid_register(reg) != ADXL345_OK)
         {
             returnStatus = ADXL345_ERROR;
         }
@@ -124,9 +125,9 @@ static ADXL345_Status adxl_read(ADXL345Driver* Driver, uint8_t reg, uint8_t* des
     {
         uint8_t txrx[2U] = {ADXL345_SINGLE_BYTE_READ | reg, 0x00};
 
-        Driver->iface->cs_low(Driver->device);
-        returnStatus = Driver->iface->spi_txrx(txrx, txrx, 2U);
-        Driver->iface->cs_high(Driver->device);
+        driver->iface->cs_low(driver->device);
+        returnStatus = driver->iface->spi_txrx(txrx, txrx, 2U);
+        driver->iface->cs_high(driver->device);
 
         *dest = txrx[1U];
     }
@@ -140,7 +141,7 @@ static ADXL345_Status adxl_read(ADXL345Driver* Driver, uint8_t reg, uint8_t* des
  *
  * @pre Pointer dest must point to uint16_t[3] table.
  *
- * @param[in] Driver pointer to ADXL345Driver instance.
+ * @param[in] driver pointer to ADXL345Driver instance.
  * @param[in] reg register address.
  * @param[in] dest pointer to uint16_t[3] table.
  *
@@ -149,20 +150,21 @@ static ADXL345_Status adxl_read(ADXL345Driver* Driver, uint8_t reg, uint8_t* des
  *
  * @note Function handle SPI CS line using interface callbacks.
  */
-static ADXL345_Status adxl_multi_read(ADXL345Driver* Driver, uint16_t* dest)
+static ADXL345_Status adxl_multi_read(ADXL345Driver* driver, uint16_t* dest)
 {
 
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (Driver == NULL || (Driver->device) == NULL || (Driver->iface) == NULL || (dest == NULL))
+    if (driver == NULL || (driver->device) == NULL || (driver->iface) == NULL || (dest == NULL))
     {
         returnStatus = ADXL345_ERROR;
     }
 
     if (returnStatus == ADXL345_OK)
     {
-        if (Driver->iface->cs_high == NULL || (Driver->iface->cs_low) == NULL ||
-            (Driver->iface->spi_txrx) == NULL)
+
+        if (driver->iface->cs_high == NULL || (driver->iface->cs_low) == NULL ||
+            (driver->iface->spi_txrx) == NULL)
         {
             returnStatus = ADXL345_ERROR;
         }
@@ -172,11 +174,11 @@ static ADXL345_Status adxl_multi_read(ADXL345Driver* Driver, uint16_t* dest)
 
     if (returnStatus == ADXL345_OK)
     {
-
-        Driver->iface->cs_low(Driver->device);
-        returnStatus = Driver->iface->spi_txrx(txrx, txrx, 7U);
-        Driver->iface->cs_high(Driver->device);
+        driver->iface->cs_low(driver->device);
+        returnStatus = driver->iface->spi_txrx(txrx, txrx, 7U);
+        driver->iface->cs_high(driver->device);
     }
+
     if (returnStatus == ADXL345_OK)
     {
         dest[0U] = (((uint16_t)txrx[2U]) << 8U) | txrx[1U];
@@ -186,22 +188,22 @@ static ADXL345_Status adxl_multi_read(ADXL345Driver* Driver, uint16_t* dest)
     return returnStatus;
 }
 /**
- * @brief Reads data from ADXL345 Device specified by Driver pointer
- * and stores it in Driver->device structure
+ * @brief Reads data from ADXL345 Device specified by driver pointer
+ * and stores it in driver->device structure
  *
- * @param[in] Driver pointer to target device structure
+ * @param[in] driver pointer to target device structure
  *
  * @return ADXL345_OK on success.
  * @return ADXL345_ERROR on invalid input or read failure.
  *
  * @note Validates driver and interface
  */
-ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* Driver)
+ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* driver)
 {
 
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (Driver == NULL)
+    if (driver == NULL)
     {
         returnStatus = ADXL345_ERROR;
     }
@@ -210,18 +212,18 @@ ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* Driver)
 
     if (returnStatus == ADXL345_OK)
     {
-        returnStatus = adxl_multi_read(Driver, axes);
+        returnStatus = adxl_multi_read(driver, axes);
     }
 
     if (returnStatus == ADXL345_OK)
     {
-        Driver->device->DATAX = axes[0];
-        Driver->device->DATAY = axes[1];
-        Driver->device->DATAZ = axes[2];
+        driver->device->DATAX = axes[0];
+        driver->device->DATAY = axes[1];
+        driver->device->DATAZ = axes[2];
     }
     return returnStatus;
 }
-uint8_t ADXL_CheckDevice(ADXL345Driver* Driver)
+uint8_t ADXL_CheckDevice(ADXL345Driver* driver)
 {
     uint8_t txrx;
     adxl_read(Device, Env, ADXL345_DEVID, &txrx);
@@ -234,11 +236,13 @@ uint8_t ADXL_CheckDevice(ADXL345Driver* Driver)
         return 0;
     }
 }
-ADXL345_Status ADXL_ReadDevice(ADXL345Driver* Driver)
+ADXL345_Status ADXL_ReadDevice(ADXL345Driver* driver)
 {
     ADXL345_Status returnStatus;
+    //
     if (!Device || !Env)
         return ADXL345_ERROR;
+    //
     uint8_t* ptrDataTab[6] = {
         &Device->DATAX0,
         &Device->DATAX1,
@@ -247,18 +251,21 @@ ADXL345_Status ADXL_ReadDevice(ADXL345Driver* Driver)
         &Device->DATAZ0,
         &Device->DATAZ1,
     };
+    //
     for (int i = 0; i < 6; i++)
     {
         returnStatus = adxl_read(Device, Env, (ADXL345_DATAX0 + i), ptrDataTab[i]);
         if (returnStatus != ADXL345_OK)
             return returnStatus;
     }
+    //
     Device->DATAX = (((uint16_t)Device->DATAX1) << 8) | Device->DATAX0;
     Device->DATAY = (((uint16_t)Device->DATAY1) << 8) | Device->DATAY0;
     Device->DATAZ = (((uint16_t)Device->DATAZ1) << 8) | Device->DATAZ0;
+    //
     return ADXL345_OK;
 }
-ADXL345_Status ADXL_DeviceDump(ADXL345Driver* Driver, char* Dest, uint8_t Size)
+ADXL345_Status ADXL_DeviceDump(ADXL345Driver* driver, char* Dest, uint8_t Size)
 {
     if (!Device || !Dest)
         return ADXL345_ERROR;
@@ -275,7 +282,7 @@ ADXL345_Status ADXL_DeviceDump(ADXL345Driver* Driver, char* Dest, uint8_t Size)
     }
     return ADXL345_ERROR;
 }
-ADXL345_Status ADXL_SetMeasure(ADXL345Driver* Driver, uint8_t mode) //
+ADXL345_Status ADXL_SetMeasure(ADXL345Driver* driver, uint8_t mode) //
 {
     ADXL345_Status returnStatus;
     if (!Device || !Env)
@@ -292,7 +299,7 @@ ADXL345_Status ADXL_SetMeasure(ADXL345Driver* Driver, uint8_t mode) //
     returnStatus = adxl_write(Device, Env, ADXL345_POWER_CTL, tx);
     return returnStatus;
 }
-ADXL345_Status ADXL_SetRange(ADXL345Driver* Driver, uint8_t Range) //
+ADXL345_Status ADXL_SetRange(ADXL345Driver* driver, uint8_t Range) //
 {
     ADXL345_Status returnStatus;
     if ((!Device || !Env) || (Range < 0 || Range > 3))
@@ -324,7 +331,7 @@ ADXL345_Status ADXL_SetRange(ADXL345Driver* Driver, uint8_t Range) //
         return ADXL345_ERROR;
     }
 }
-ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* Driver)
+ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* driver)
 {
     ADXL345_Status returnStatus;
     if (!Device || !Env)
@@ -337,7 +344,7 @@ ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* Driver)
     returnStatus = adxl_write(Device, Env, ADXL345_DATA_FORMAT, tx);
     return returnStatus;
 }
-ADXL345_Status ADXL_SetJustify(ADXL345Driver* Driver, uint8_t mode)
+ADXL345_Status ADXL_SetJustify(ADXL345Driver* driver, uint8_t mode)
 {
     ADXL345_Status returnStatus;
     if (!Device || !Env || (mode < 0))
@@ -354,7 +361,7 @@ ADXL345_Status ADXL_SetJustify(ADXL345Driver* Driver, uint8_t mode)
     returnStatus = adxl_write(Device, Env, ADXL345_DATA_FORMAT, txrx);
     return returnStatus;
 }
-ADXL345_Status ADXL_SetOffset(ADXL345Driver* Driver, uint8_t offX, uint8_t offY,
+ADXL345_Status ADXL_SetOffset(ADXL345Driver* driver, uint8_t offX, uint8_t offY,
                               uint8_t offZ) //
 {
     ADXL345_Status returnStatus;
