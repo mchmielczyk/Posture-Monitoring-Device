@@ -53,6 +53,11 @@
 #define ADXL345_SINGLE_BYTE_READ (0x01 << 7)
 #define ADXL345_MULTI_BYTE_READ ((0x01 << 7) | (0x01 << 6))
 
+#define ADXL345_POWER_CTL_measure_bit (0x01U << 3U) ///< POWER_CTL measure bit
+#define ADXL345_DATA_FORMAT_range_bits 0x03U ///< ADXL345_DATA_FORMAT range bits
+#define ADXL345_DATA_FORMAT_full_res_bit (0x01U << 3U) ///< ADXL345_DATA_FORMAT FULL_RES bit
+#define ADXL345_DATA_FORMAT_justify_bit (0x01U << 2U) ///< ADXL345_DATA_FORMAT justify bit
+
 #define adxl345_spi_tx_flag 1U
 #define adxl345_spi_txrx_flag 2U
 
@@ -107,7 +112,7 @@ ADXL345_Status ADXL_DeviceDump(ADXL345Driver* Driver, char* Dest, uint8_t Size);
 ADXL345_Status ADXL_SetRange(ADXL345Driver* Driver, uint8_t Range);
 ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* Driver);
 ADXL345_Status ADXL_SetJustify(ADXL345Driver* Driver, uint8_t mode);
-uint8_t ADXL_CheckDevice(ADXL345Driver* Driver);
+ADXL345_Status ADXL_CheckDevice(ADXL345Driver* Driver);
 ADXL345_Status ADXL_SetOffset(ADXL345Driver* Driver, uint8_t offX, uint8_t offY, uint8_t offZ);
 ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* Driver);
 

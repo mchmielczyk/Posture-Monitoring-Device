@@ -7,6 +7,20 @@
 
 #include "adxl345.h"
 /**
+ * @brief Checks if driver struct and its first level childs are not NULL
+ *
+ * @param driver ADXL345Driver struct to be checked
+ *
+ * @return ADXL345_OK if not NULL
+ * @return ADXL345_ERROR otherwise
+ */
+static inline ADXL345_Status adxl_check_driver(ADXL345Driver* driver)
+{
+    return ((driver != NULL) && (driver->device != NULL) && (driver->iface != NULL))
+               ? ADXL345_OK
+               : ADXL345_ERROR;
+}
+/**
  * @brief updates device data structure
  * by changing uint8_t DATAX0/DATAX1..DATAZ0/DATAZ1 to uint16_t DATAX..DATAZ
  * according to adxl345 data sheet
@@ -50,14 +64,9 @@ static inline ADXL345_Status adxl_shift_all_data(ADXL345Driver* driver)
  */
 static inline ADXL345_Status adxl_valid_register(uint8_t reg)
 {
-    ADXL345_Status result = ADXL345_ERROR;
-
-    if ((reg == 0U) || ((reg >= ADXL345_THRESH_TAP) && (reg <= ADXL345_FIFO_STATUS)))
-    {
-        result = ADXL345_OK;
-    }
-
-    return result;
+    return ((reg == 0U) || ((reg >= ADXL345_THRESH_TAP) && (reg <= ADXL345_FIFO_STATUS)))
+               ? ADXL345_OK
+               : ADXL345_ERROR;
 }
 /**
  * @brief Single value write to target ADXL345 device data register via SPI.
@@ -78,7 +87,7 @@ static ADXL345_Status adxl_write(ADXL345Driver* driver, uint8_t reg, uint8_t val
 {
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (driver == NULL || (driver->device) == NULL || (driver->iface) == NULL)
+    if (adxl_check_driver(driver) != ADXL345_OK)
     {
         returnStatus = ADXL345_ERROR;
     }
@@ -130,7 +139,7 @@ static ADXL345_Status adxl_read(ADXL345Driver* driver, uint8_t reg, uint8_t* des
 
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (driver == NULL || (driver->device) == NULL || (driver->iface) == NULL || (dest == NULL))
+    if ((adxl_check_driver(driver) != ADXL345_OK) || (dest == NULL))
     {
         returnStatus = ADXL345_ERROR;
     }
@@ -162,6 +171,7 @@ static ADXL345_Status adxl_read(ADXL345Driver* driver, uint8_t reg, uint8_t* des
 
         *dest = txrx[1U];
     }
+
     return returnStatus;
 }
 /**
@@ -185,7 +195,7 @@ static ADXL345_Status adxl_multi_read(ADXL345Driver* driver, uint16_t* dest)
 
     ADXL345_Status returnStatus = ADXL345_OK;
 
-    if (driver == NULL || (driver->device) == NULL || (driver->iface) == NULL || (dest == NULL))
+    if (adxl_check_driver(driver) != ADXL345_OK || (dest == NULL))
     {
         returnStatus = ADXL345_ERROR;
     }
@@ -253,156 +263,292 @@ ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* driver)
     }
     return returnStatus;
 }
-uint8_t ADXL_CheckDevice(ADXL345Driver* driver)
+/**
+ * @brief Checks if connection with ADXL345 is correct
+ *
+ * Proper read from ADXL345_DEVID register of device
+ * outcomes in same determinant 0xE5 value
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ *
+ * @return ADXL345_OK on proper device connection
+ * @return ADXL345_ERROR on invalid pointers to device
+ * or wrong read value
+ */
+ADXL345_Status ADXL_CheckDevice(ADXL345Driver* driver)
 {
+    ADXL345_Status returnStatus = adxl_check_driver(driver);
+
     uint8_t txrx;
-    adxl_read(driver, ADXL345_DEVID, &txrx);
-    if (txrx == 0xE5)
+
+    if (returnStatus == ADXL345_OK)
     {
-        return 1;
+        returnStatus = adxl_read(driver, ADXL345_DEVID, &txrx);
     }
-    else
+
+    if (returnStatus == ADXL345_OK)
     {
-        return 0;
+        returnStatus = (txrx == 0xE5) ? ADXL345_OK : ADXL345_ERROR;
     }
+
+    return returnStatus;
 }
+/**
+ * @brief Read data from device in two read per axis mode.
+ *
+ * After read data is being stored in target data structure.
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ *
+ * @return ADXL345_OK on successful read and write to structure
+ * @return ADXL345_ERROR on any problem
+ */
 ADXL345_Status ADXL_ReadDevice(ADXL345Driver* driver)
 {
-    ADXL345_Status returnStatus;
-    //
-    if (!driver)
-        return ADXL345_ERROR;
-    //
-    uint8_t* ptrDataTab[6] = {
-        &driver->device->DATAX0,
-        &driver->device->DATAX1,
-        &driver->device->DATAY0,
-        &driver->device->DATAY1,
-        &driver->device->DATAZ0,
-        &driver->device->DATAZ1,
-    };
-    //
-    for (int i = 0; i < 6; i++)
+    ADXL345_Status returnStatus = adxl_check_driver(driver);
+
+    if (returnStatus == ADXL345_OK)
     {
-        returnStatus = adxl_read(driver, (ADXL345_DATAX0 + i), ptrDataTab[i]);
-        if (returnStatus != ADXL345_OK)
-            return returnStatus;
+        uint8_t* ptrDataTab[6U] = {
+            &driver->device->DATAX0,
+            &driver->device->DATAX1,
+            &driver->device->DATAY0,
+            &driver->device->DATAY1,
+            &driver->device->DATAZ0,
+            &driver->device->DATAZ1,
+        };
+
+        for (uint8_t i = 0U; i < 6U; i++)
+        {
+            returnStatus = adxl_read(driver, (ADXL345_DATAX0 + i), ptrDataTab[i]);
+
+            if (returnStatus != ADXL345_OK)
+                break;
+        }
     }
-    // adxl_shift_all_data(driver)
-    driver->device->DATAX = (((uint16_t)driver->device->DATAX1) << 8) | driver->device->DATAX0;
-    driver->device->DATAY = (((uint16_t)driver->device->DATAY1) << 8) | driver->device->DATAY0;
-    driver->device->DATAZ = (((uint16_t)driver->device->DATAZ1) << 8) | driver->device->DATAZ0;
-    //
-    return ADXL345_OK;
-}
-ADXL345_Status ADXL_DeviceDump(ADXL345Driver* driver, char* Dest, uint8_t Size)
-{
-    if (!driver)
-        return ADXL345_ERROR;
-    int DumpStatus = snprintf(Dest,
-                              Size,
-                              "%s: X: %d, Y: %d, Z: %d\r\n",
-                              driver->device->name,
-                              driver->device->DATAX,
-                              driver->device->DATAY,
-                              driver->device->DATAZ);
-    if (DumpStatus > -1 && DumpStatus < Size)
+
+    if (returnStatus == ADXL345_OK)
     {
-        return ADXL345_OK;
+        returnStatus = adxl_shift_all_data(driver);
     }
-    return ADXL345_ERROR;
-}
-ADXL345_Status ADXL_SetMeasure(ADXL345Driver* driver, uint8_t mode) //
-{
-    ADXL345_Status returnStatus;
-    if (!driver)
-        return ADXL345_ERROR;
-    uint8_t rx;
-    returnStatus = adxl_read(driver, ADXL345_POWER_CTL, &rx);
-    if (returnStatus != ADXL345_OK)
-        return returnStatus;
-    uint8_t tx = rx & 0xF7;
-    if (mode)
-    {
-        tx |= (0x01 << 3);
-    }
-    returnStatus = adxl_write(driver, ADXL345_POWER_CTL, tx);
+
     return returnStatus;
 }
-ADXL345_Status ADXL_SetRange(ADXL345Driver* driver, uint8_t Range) //
+/**
+ * @brief Writes name, DATAX, DATAY, DATAZ to dest string
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ * @param[in] dest pointer to write to buffer
+ * @param[in] size size of destination buffer
+ *
+ * @return ADXL345_OK when pointers are valid and write
+ * to dest success
+ * @return ADXL345_ERROR otherwise
+ *
+ * @note Ensures proper driver pointers and write to dest pointer
+ */
+ADXL345_Status ADXL_DeviceDump(ADXL345Driver* driver, char* dest, uint8_t size)
 {
-    ADXL345_Status returnStatus;
-    if ((!driver) || (Range < 0 || Range > 3))
-        return ADXL345_ERROR;
-    uint8_t rx;
-    returnStatus = adxl_read(driver, ADXL345_DATA_FORMAT, &rx);
-    if (returnStatus != ADXL345_OK)
-        return returnStatus;
-    uint8_t tx = 0;
-    switch (Range)
+    ADXL345_Status returnStatus = ADXL345_OK;
+
+    if ((adxl_check_driver(driver) != ADXL345_OK) || (dest == NULL))
     {
-    case RANGE_2G:
-        tx = (rx & 0xFC);
-        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, tx);
-        return returnStatus;
-    case RANGE_4G:
-        tx = (rx & 0xFC) | 0x01;
-        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, tx);
-        return returnStatus;
-    case RANGE_8G:
-        tx = (rx & 0xFC) | 0x02;
-        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, tx);
-        return returnStatus;
-    case RANGE_16G:
-        tx = (rx & 0xFC) | 0x03;
-        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, tx);
-        return returnStatus;
-    default:
-        return ADXL345_ERROR;
+        returnStatus = ADXL345_ERROR;
     }
+
+    if (returnStatus == ADXL345_OK)
+    {
+        int DumpStatus = snprintf(dest,
+                                  size,
+                                  "%s: X: %d, Y: %d, Z: %d\r\n",
+                                  driver->device->name,
+                                  driver->device->DATAX,
+                                  driver->device->DATAY,
+                                  driver->device->DATAZ);
+
+        returnStatus = (DumpStatus > -1 && DumpStatus < size) ? ADXL345_OK : ADXL345_ERROR;
+    }
+
+    return returnStatus;
 }
+/**
+ * @brief Sets or zeroes measurement bit in ADXL345_POWER_CTL register
+ * of target device
+ *
+ * When measure bit is zeroed device goes into standby mode with
+ * minimal power consumption
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ * @param[in] mode 0U for standby mode, uint8_t>0 for measurement mode
+ *
+ * @return ADXL345_OK on set success
+ * @return ADXL345_ERROR otherwise
+ *
+ * @note function checks for not NULL driver pointers
+ */
+ADXL345_Status ADXL_SetMeasure(ADXL345Driver* driver, uint8_t mode)
+{
+    ADXL345_Status returnStatus = adxl_check_driver(driver);
+
+    uint8_t txrx;
+
+    if (returnStatus == ADXL345_OK)
+    {
+        returnStatus = adxl_read(driver, ADXL345_POWER_CTL, &txrx);
+    }
+
+    if (returnStatus == ADXL345_OK)
+    {
+        txrx &= ~ADXL345_POWER_CTL_measure_bit;
+
+        if (mode > 0)
+        {
+            txrx |= ADXL345_POWER_CTL_measure_bit;
+        }
+
+        returnStatus = adxl_write(driver, ADXL345_POWER_CTL, txrx);
+    }
+
+    return returnStatus;
+}
+/**
+ * @brief Sets desired range of device data collection resolution
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ * @param[in] range flag one of: RANGE_2G, RANGE_4G, RANGE_8G, RANGE_16G
+ *
+ * @return ADXL345_OK on success
+ * @return ADXL345_ERROR on NULL pointer to driver or r/w error
+ *
+ * @note function checks for not NULL driver pointers
+ */
+ADXL345_Status ADXL_SetRange(ADXL345Driver* driver, uint8_t range)
+{
+    ADXL345_Status returnStatus = ADXL345_ERROR;
+
+    if ((adxl_check_driver(driver) == ADXL345_OK) && (range <= RANGE_16G))
+    {
+        returnStatus = ADXL345_OK;
+    }
+
+    uint8_t txrx;
+
+    if (returnStatus == ADXL345_OK)
+    {
+        returnStatus = adxl_read(driver, ADXL345_DATA_FORMAT, &txrx);
+    }
+
+    if (returnStatus == ADXL345_OK)
+    {
+        txrx = (txrx & ~ADXL345_DATA_FORMAT_range_bits) | range;
+        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, txrx);
+    }
+
+    return returnStatus;
+}
+/**
+ * @brief Sets FULL_RES bit in ADXL345_DATA_FORMAT register
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ *
+ * @return ADXL345_OK on success
+ * @return ADXL345_ERROR on NULL pointer to driver or r/w error
+ *
+ * @note function checks for not NULL driver pointers
+ */
 ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* driver)
 {
-    ADXL345_Status returnStatus;
-    if (!driver)
-        return ADXL345_ERROR;
-    uint8_t rx;
-    returnStatus = adxl_read(driver, ADXL345_DATA_FORMAT, &rx);
-    if (returnStatus != ADXL345_OK)
-        return returnStatus;
-    uint8_t tx = rx | (0x01 << 3);
-    returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, tx);
+    ADXL345_Status returnStatus = adxl_check_driver(driver);
+
+    uint8_t txrx;
+
+    if (returnStatus == ADXL345_OK)
+    {
+        returnStatus = adxl_read(driver, ADXL345_DATA_FORMAT, &txrx);
+    }
+
+    if (returnStatus == ADXL345_OK)
+    {
+        txrx |= ADXL345_DATA_FORMAT_full_res_bit;
+        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, txrx);
+    }
+
     return returnStatus;
 }
+/**
+ * @brief Sets or zeroes justify bit in ADXL345_DATA_FORMAT register
+ * of target device
+ *
+ * A setting of 1U in the justify bit selects left-justified (MSB) mode, and
+ * a setting of 0U selects right-justified mode with sign extension.
+ *
+ * @param[in] driver ADXL345Driver data structure holding pointers to
+ * target device.
+ * @param[in] mode 0U for LSB mode, uint8_t>0 for MSB mode
+ *
+ * @return ADXL345_OK on set success
+ * @return ADXL345_ERROR otherwise
+ *
+ * @note function checks for not NULL driver pointers
+ */
 ADXL345_Status ADXL_SetJustify(ADXL345Driver* driver, uint8_t mode)
 {
-    ADXL345_Status returnStatus;
-    if (!driver || (mode < 0))
-        return ADXL345_ERROR;
+    ADXL345_Status returnStatus = adxl_check_driver(driver);
+
     uint8_t txrx;
-    returnStatus = adxl_read(driver, ADXL345_DATA_FORMAT, &txrx);
-    if (returnStatus != ADXL345_OK)
-        return returnStatus;
-    txrx &= (0xFB);
-    if (mode)
+
+    if (returnStatus == ADXL345_OK)
     {
-        txrx |= (0x01 << 2);
+        returnStatus = adxl_read(driver, ADXL345_DATA_FORMAT, &txrx);
     }
-    returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, txrx);
+
+    if (returnStatus == ADXL345_OK)
+    {
+        txrx &= ~ADXL345_DATA_FORMAT_justify_bit;
+
+        if (mode > 0)
+        {
+            txrx |= ADXL345_DATA_FORMAT_justify_bit;
+        }
+        returnStatus = adxl_write(driver, ADXL345_DATA_FORMAT, txrx);
+    }
     return returnStatus;
 }
-ADXL345_Status ADXL_SetOffset(ADXL345Driver* driver, uint8_t offX, uint8_t offY,
-                              uint8_t offZ) //
+/**
+ * @brief Sets desired offset to X,Y,Z device axis.
+ *
+ * @param[in] offX offset value for X axis.
+ * @param[in] offY offset value for Y axis.
+ * @param[in] offZ offset value for Z axis.
+ *
+ * @return ADXL345_OK on set success.
+ * @return ADXL345_ERROR otherwise.
+ *
+ * @note on failure axis may stay partially changed.
+ */
+ADXL345_Status ADXL_SetOffset(ADXL345Driver* driver, uint8_t offX, uint8_t offY, uint8_t offZ)
 {
-    ADXL345_Status returnStatus;
-    if (!driver)
-        return ADXL345_ERROR;
-    returnStatus = adxl_write(driver, ADXL345_OFSX, offX);
-    if (returnStatus != ADXL345_OK)
-        return returnStatus;
-    returnStatus = adxl_write(driver, ADXL345_OFSY, offY);
-    if (returnStatus != ADXL345_OK)
-        return returnStatus;
-    returnStatus = adxl_write(driver, ADXL345_OFSZ, offZ);
+    ADXL345_Status returnStatus = adxl_check_driver(driver);
+
+    if (returnStatus == ADXL345_OK)
+    {
+        returnStatus = adxl_write(driver, ADXL345_OFSX, offX);
+    }
+
+    if (returnStatus == ADXL345_OK)
+    {
+        returnStatus = adxl_write(driver, ADXL345_OFSY, offY);
+    }
+
+    if (returnStatus == ADXL345_OK)
+    {
+        returnStatus = adxl_write(driver, ADXL345_OFSZ, offZ);
+    }
     return returnStatus;
 }
