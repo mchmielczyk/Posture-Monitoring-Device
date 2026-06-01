@@ -3,7 +3,8 @@
 #include "cpputest/include/CppUTest/TestHarness.h"
 #include "cpputest/include/CppUTestExt/MockSupport.h"
 #include <stdexcept>
-extern "C"{
+extern "C"
+{
 #include "../Core/Inc/adxl345.h"
 #include "stdio.h"
 #include "stdint.h"

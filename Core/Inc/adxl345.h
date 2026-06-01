@@ -11,47 +11,47 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define ADXL345_DEVID 0x00          ///< Device ID
-#define ADXL345_THRESH_TAP 0x1D     ///< Tap threshold
-#define ADXL345_OFSX 0x1E           ///< X-axis offset
-#define ADXL345_OFSY 0x1F           ///< Y-axis offset
-#define ADXL345_OFSZ 0x20           ///< Z-axis offset
-#define ADXL345_DUR 0x21            ///< Tap duration
-#define ADXL345_Latent 0x22         ///< Tap latency
-#define ADXL345_Window 0x23         ///< Tap window
-#define ADXL345_THRESH_ACT 0x24     ///< Activity threshold
-#define ADXL345_THRESH_INACT 0x25   ///< Inactivity threshold
-#define ADXL345_TIME_INACT 0x26     ///< Inactivity time
-#define ADXL345_ACT_INACT_CTL 0x27  ///< Axis enable control for activity and inactivity detection
-#define ADXL345_THRESH_FF 0x28      ///< Free-fall threshold
-#define ADXL345_TIME_FF 0x29        ///< Free-fall time
-#define ADXL345_TAP_AXES 0x2A       ///< Axis control for tap/double tap
-#define ADXL345_ACT_TAP_STATUS 0x2B ///< Source of tap/double tap
-#define ADXL345_BW_RATE 0x2C        ///< Data rate and power mode control
-#define ADXL345_POWER_CTL 0x2D      ///< Power-saving features control
-#define ADXL345_INT_ENABLE 0x2E     ///< Interrupt enable control
-#define ADXL345_INT_MAP 0x2F        ///< Interrupt mapping control
-#define ADXL345_INT_SOURCE 0x30     ///< Source of interrupts
-#define ADXL345_DATA_FORMAT 0x31    ///< Data format control
-#define ADXL345_DATAX0 0x32         ///< X-Axis Data 0
-#define ADXL345_DATAX1 0x33         ///< X-Axis Data 1
-#define ADXL345_DATAY0 0x34         ///< Y-Axis Data 0
-#define ADXL345_DATAY1 0x35         ///< Y-Axis Data 1
-#define ADXL345_DATAZ0 0x36         ///< Z-Axis Data 0
-#define ADXL345_DATAZ1 0x37         ///< Z-Axis Data 1
-#define ADXL345_FIFO_CTL 0x38       ///< FIFO control
-#define ADXL345_FIFO_STATUS 0x39    ///< FIFO status
+#define ADXL345_DEVID 0x00U          ///< Device ID
+#define ADXL345_THRESH_TAP 0x1DU     ///< Tap threshold
+#define ADXL345_OFSX 0x1EU           ///< X-axis offset
+#define ADXL345_OFSY 0x1FU           ///< Y-axis offset
+#define ADXL345_OFSZ 0x20U           ///< Z-axis offset
+#define ADXL345_DUR 0x21U            ///< Tap duration
+#define ADXL345_Latent 0x22U         ///< Tap latency
+#define ADXL345_Window 0x23U         ///< Tap window
+#define ADXL345_THRESH_ACT 0x24U     ///< Activity threshold
+#define ADXL345_THRESH_INACT 0x25U   ///< Inactivity threshold
+#define ADXL345_TIME_INACT 0x26U     ///< Inactivity time
+#define ADXL345_ACT_INACT_CTL 0x27U  ///< Axis enable control for activity and inactivity detection
+#define ADXL345_THRESH_FF 0x28U      ///< Free-fall threshold
+#define ADXL345_TIME_FF 0x29U        ///< Free-fall time
+#define ADXL345_TAP_AXES 0x2AU       ///< Axis control for tap/double tap
+#define ADXL345_ACT_TAP_STATUS 0x2BU ///< Source of tap/double tap
+#define ADXL345_BW_RATE 0x2CU        ///< Data rate and power mode control
+#define ADXL345_POWER_CTL 0x2DU      ///< Power-saving features control
+#define ADXL345_INT_ENABLE 0x2EU     ///< Interrupt enable control
+#define ADXL345_INT_MAP 0x2FU        ///< Interrupt mapping control
+#define ADXL345_INT_SOURCE 0x30U     ///< Source of interrupts
+#define ADXL345_DATA_FORMAT 0x31U    ///< Data format control
+#define ADXL345_DATAX0 0x32U         ///< X-Axis Data 0
+#define ADXL345_DATAX1 0x33U         ///< X-Axis Data 1
+#define ADXL345_DATAY0 0x34U         ///< Y-Axis Data 0
+#define ADXL345_DATAY1 0x35U         ///< Y-Axis Data 1
+#define ADXL345_DATAZ0 0x36U         ///< Z-Axis Data 0
+#define ADXL345_DATAZ1 0x37U         ///< Z-Axis Data 1
+#define ADXL345_FIFO_CTL 0x38U       ///< FIFO control
+#define ADXL345_FIFO_STATUS 0x39U    ///< FIFO status
 
-#define RANGE_2G 0x00  ///< +-2g Range
-#define RANGE_4G 0x01  ///< +-4g Range
-#define RANGE_8G 0x02  ///< +-8g Range
-#define RANGE_16G 0x03 ///< +-16g Range
+#define RANGE_2G 0x00U  ///< +-2g Range
+#define RANGE_4G 0x01U  ///< +-4g Range
+#define RANGE_8G 0x02U  ///< +-8g Range
+#define RANGE_16G 0x03U ///< +-16g Range
 
-#define ADXL345_SET 0x01   ///< High
-#define ADXL345_RESET 0x00 ///< Low
+#define ADXL345_SET 0x01U   ///< High
+#define ADXL345_RESET 0x00U ///< Low
 
-#define ADXL345_SINGLE_BYTE_READ (0x01 << 7)
-#define ADXL345_MULTI_BYTE_READ ((0x01 << 7) | (0x01 << 6))
+#define ADXL345_SINGLE_BYTE_READ (0x01U << 7U)
+#define ADXL345_MULTI_BYTE_READ ((0x01U << 7U) | (0x01U << 6U))
 
 #define ADXL345_POWER_CTL_measure_bit (0x01U << 3U) ///< POWER_CTL measure bit
 #define ADXL345_DATA_FORMAT_range_bits 0x03U ///< ADXL345_DATA_FORMAT range bits
@@ -61,12 +61,14 @@
 #define adxl345_spi_tx_flag 1U
 #define adxl345_spi_txrx_flag 2U
 
+#define ADXL345_DEVID_correct_code  0xE5U ///< ADXL345_DEVID correct device id code
+
 typedef enum
 {
-    ADXL345_OK = 0x00,
-    ADXL345_ERROR = 0x01,
-    ADXL345_BUSY = 0x02,
-    ADXL345_TIMEOUT = 0x03
+    ADXL345_OK = 0x00U,
+    ADXL345_ERROR = 0x01U,
+    ADXL345_BUSY = 0x02U,
+    ADXL345_TIMEOUT = 0x03U
 } ADXL345_Status;
 
 typedef struct
@@ -82,11 +84,11 @@ typedef struct
     uint16_t DATAZ;
     void* PORT;
     uint16_t PIN;
-    char name[3];
+    char name[3U];
 } ADXL345Data;
 
 typedef void (*GPIO_WritePin_fn)(ADXL345Data* Device);
-typedef ADXL345_Status (*SPI_Transmit_fn)(const uint8_t* tx, uint16_t size);
+typedef ADXL345_Status (*SPI_Transmit_fn)(uint8_t* tx, uint16_t size);
 typedef ADXL345_Status (*SPI_TransmitReceive_fn)(uint8_t* tx, uint8_t* rx, uint16_t size);
 typedef void (*ERR_RuntimeError)(const char* message, int parameter, const char* file, int line);
 

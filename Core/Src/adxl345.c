@@ -289,7 +289,7 @@ ADXL345_Status ADXL_CheckDevice(ADXL345Driver* driver)
 
     if (returnStatus == ADXL345_OK)
     {
-        returnStatus = (txrx == 0xE5) ? ADXL345_OK : ADXL345_ERROR;
+        returnStatus = (txrx == ADXL345_DEVID_correct_code) ? ADXL345_OK : ADXL345_ERROR;
     }
 
     return returnStatus;
@@ -405,7 +405,7 @@ ADXL345_Status ADXL_SetMeasure(ADXL345Driver* driver, uint8_t mode)
     {
         txrx &= ~ADXL345_POWER_CTL_measure_bit;
 
-        if (mode > 0)
+        if (mode > 0U)
         {
             txrx |= ADXL345_POWER_CTL_measure_bit;
         }
@@ -512,7 +512,7 @@ ADXL345_Status ADXL_SetJustify(ADXL345Driver* driver, uint8_t mode)
     {
         txrx &= ~ADXL345_DATA_FORMAT_justify_bit;
 
-        if (mode > 0)
+        if (mode > 0U)
         {
             txrx |= ADXL345_DATA_FORMAT_justify_bit;
         }
