@@ -53,69 +53,82 @@
 #define ADXL345_SINGLE_BYTE_READ (0x01U << 7U)
 #define ADXL345_MULTI_BYTE_READ ((0x01U << 7U) | (0x01U << 6U))
 
-#define ADXL345_POWER_CTL_measure_bit (0x01U << 3U) ///< POWER_CTL measure bit
-#define ADXL345_DATA_FORMAT_range_bits 0x03U ///< ADXL345_DATA_FORMAT range bits
+#define ADXL345_POWER_CTL_measure_bit (0x01U << 3U)    ///< POWER_CTL measure bit
+#define ADXL345_DATA_FORMAT_range_bits 0x03U           ///< ADXL345_DATA_FORMAT range bits
 #define ADXL345_DATA_FORMAT_full_res_bit (0x01U << 3U) ///< ADXL345_DATA_FORMAT FULL_RES bit
-#define ADXL345_DATA_FORMAT_justify_bit (0x01U << 2U) ///< ADXL345_DATA_FORMAT justify bit
+#define ADXL345_DATA_FORMAT_justify_bit (0x01U << 2U)  ///< ADXL345_DATA_FORMAT justify bit
 
-#define adxl345_spi_tx_flag 1U
-#define adxl345_spi_txrx_flag 2U
+#define ADXL345_DEVID_correct_code 0xE5U ///< ADXL345_DEVID correct device id code
 
-#define ADXL345_DEVID_correct_code  0xE5U ///< ADXL345_DEVID correct device id code
-
-typedef enum
+#ifdef __cplusplus
+extern "C"
 {
-    ADXL345_OK = 0x00U,
-    ADXL345_ERROR = 0x01U,
-    ADXL345_BUSY = 0x02U,
-    ADXL345_TIMEOUT = 0x03U
-} ADXL345_Status;
+#endif
 
-typedef struct
-{
-    uint8_t DATAX0;
-    uint8_t DATAX1;
-    uint8_t DATAY0;
-    uint8_t DATAY1;
-    uint8_t DATAZ0;
-    uint8_t DATAZ1;
-    uint16_t DATAX;
-    uint16_t DATAY;
-    uint16_t DATAZ;
-    void* PORT;
-    uint16_t PIN;
-    char name[3U];
-} ADXL345Data;
+    typedef enum
+    {
+        ADXL345_OK = 0x00U,
+        ADXL345_ERROR = 0x01U,
+        ADXL345_BUSY = 0x02U,
+        ADXL345_TIMEOUT = 0x03U
+    } ADXL345_Status;
 
-typedef void (*GPIO_WritePin_fn)(ADXL345Data* Device);
-typedef ADXL345_Status (*SPI_Transmit_fn)(uint8_t* tx, uint16_t size);
-typedef ADXL345_Status (*SPI_TransmitReceive_fn)(uint8_t* tx, uint8_t* rx, uint16_t size);
-typedef void (*ERR_RuntimeError)(const char* message, int parameter, const char* file, int line);
+    struct ADXL345Driver;
 
-typedef struct
-{
-    GPIO_WritePin_fn cs_high;
-    GPIO_WritePin_fn cs_low;
-    SPI_Transmit_fn spi_tx;
-    SPI_TransmitReceive_fn spi_txrx;
-    ERR_RuntimeError err_runtime;
-} ADXL345_Interface;
+    typedef ADXL345_Status (*write_fn)(const struct ADXL345Driver* driver,
+                                       uint8_t* tx,
+                                       uint16_t size);
+    typedef ADXL345_Status (*read_fn)(const struct ADXL345Driver* driver,
+                                      uint8_t* tx,
+                                      uint8_t* rx,
+                                      uint16_t size);
+    typedef void (*ERR_RuntimeError)(const char* message,
+                                     int parameter,
+                                     const char* file,
+                                     int line);
 
-typedef struct
-{
-    ADXL345_Interface* iface;
-    ADXL345Data* device;
-    uint8_t id;
-} ADXL345Driver;
+    typedef struct
+    {
+        write_fn write;
+        read_fn read;
+        ERR_RuntimeError err_runtime;
+    } ADXL345Interface;
 
-ADXL345_Status ADXL_ReadDevice(ADXL345Driver* Driver);
-ADXL345_Status ADXL_SetMeasure(ADXL345Driver* Driver, uint8_t mode);
-ADXL345_Status ADXL_DeviceDump(ADXL345Driver* Driver, char* Dest, uint8_t Size);
-ADXL345_Status ADXL_SetRange(ADXL345Driver* Driver, uint8_t Range);
-ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* Driver);
-ADXL345_Status ADXL_SetJustify(ADXL345Driver* Driver, uint8_t mode);
-ADXL345_Status ADXL_CheckDevice(ADXL345Driver* Driver);
-ADXL345_Status ADXL_SetOffset(ADXL345Driver* Driver, uint8_t offX, uint8_t offY, uint8_t offZ);
-ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* Driver);
+    typedef struct
+    {
+        uint8_t DATAX0;
+        uint8_t DATAX1;
+        uint8_t DATAY0;
+        uint8_t DATAY1;
+        uint8_t DATAZ0;
+        uint8_t DATAZ1;
+        uint16_t DATAX;
+        uint16_t DATAY;
+        uint16_t DATAZ;
+        void* PORT;
+        uint16_t PIN;
+        char name[4U];
+    } ADXL345Data;
+
+    typedef struct ADXL345Driver
+    {
+        ADXL345Interface* iface;
+        ADXL345Data* device;
+        uint8_t id;
+    } ADXL345Driver;
+
+    ADXL345_Status ADXL_ReadDevice(ADXL345Driver* Driver);
+    ADXL345_Status ADXL_SetMeasure(ADXL345Driver* Driver, uint8_t mode);
+    ADXL345_Status ADXL_DeviceDump(ADXL345Driver* Driver, char* Dest, size_t Size);
+    ADXL345_Status ADXL_SetRange(ADXL345Driver* Driver, uint8_t Range);
+    ADXL345_Status ADXL_SetFullResolution(ADXL345Driver* Driver, uint8_t mode);
+    ADXL345_Status ADXL_SetJustify(ADXL345Driver* Driver, uint8_t mode);
+    ADXL345_Status ADXL_CheckDevice(ADXL345Driver* Driver);
+    ADXL345_Status ADXL_SetOffset(ADXL345Driver* Driver, uint8_t offX, uint8_t offY, uint8_t offZ);
+    ADXL345_Status ADXL_MultiReadDevice(ADXL345Driver* Driver);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* INC_ADXL345_H_ */

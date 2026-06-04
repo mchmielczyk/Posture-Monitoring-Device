@@ -55,14 +55,15 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart);
+void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef* hrtc);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-ADXL345_Interface* GetSTM32Interface();
-volatile uint8_t dmaStatus = 0, rtcStatus = 0;
-char buffer[100];
+ADXL345Interface* GetSTM32Interface(void);
+static volatile uint8_t dmaStatus = 0;
+static volatile uint8_t rtcStatus = 0;
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart)
 {
     if (huart == &huart2)
@@ -72,7 +73,10 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart)
 }
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef* hrtc)
 {
-    rtcStatus = 1;
+    if (hrtc == &hrtc)
+    {
+        rtcStatus = 1;
+    }
 }
 /* USER CODE END 0 */
 
@@ -84,6 +88,8 @@ int main(void)
 {
 
     /* USER CODE BEGIN 1 */
+    char buffer[100];
+
     for (int i = 0; i < 5; i++)
     {
         driverPtr[i]->iface = GetSTM32Interface();
@@ -121,34 +127,60 @@ int main(void)
 
     /* Infinite loop */
     /* USER CODE BEGIN WHILE */
+    ADXL345_Status preConfiguration = ADXL345_OK;
     for (int i = 0; i < 5; i++)
     {
-        ADXL_SetMeasure(driverPtr[i], ADXL345_RESET);
-        ADXL_SetFullResolution(driverPtr[i]);
-        ADXL_SetRange(driverPtr[i], RANGE_16G);
-        ADXL_SetJustify(driverPtr[i], ADXL345_RESET);
-        ADXL_SetMeasure(driverPtr[i], ADXL345_SET);
+        if (preConfiguration == ADXL345_OK)
+        {
+            preConfiguration = ADXL_SetMeasure(driverPtr[i], ADXL345_RESET);
+        }
+
+        if (preConfiguration == ADXL345_OK)
+        {
+            preConfiguration = ADXL_SetFullResolution(driverPtr[i], ADXL345_SET);
+        }
+
+        if (preConfiguration == ADXL345_OK)
+        {
+            preConfiguration = ADXL_SetRange(driverPtr[i], RANGE_16G);
+        }
+
+        if (preConfiguration == ADXL345_OK)
+        {
+            preConfiguration = ADXL_SetJustify(driverPtr[i], ADXL345_RESET);
+        }
+
+        if (preConfiguration == ADXL345_OK)
+        {
+            preConfiguration = ADXL_SetMeasure(driverPtr[i], ADXL345_SET);
+        }
+
+        if (preConfiguration != ADXL345_OK)
+        {
+            i--;
+        }
     }
-    HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 42, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
+    (void)HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, 42, RTC_WAKEUPCLOCK_RTCCLK_DIV16);
     while (1)
     {
-        if (rtcStatus)
+        if (rtcStatus == 1)
         {
             rtcStatus = 0;
-            if (!dmaStatus)
+
+            if (dmaStatus == 0)
             {
                 dmaStatus = 1;
-                ADXL_MultiReadDevice(driverPtr[0]);
-                ADXL_MultiReadDevice(driverPtr[1]);
-                ADXL_MultiReadDevice(driverPtr[2]);
-                ADXL_MultiReadDevice(driverPtr[3]);
-                ADXL_MultiReadDevice(driverPtr[4]);
-                ADXL_RawData(devicesPtr, buffer, 100);
-                HAL_UART_Transmit_DMA(&huart2, (uint8_t*)buffer, strlen(buffer));
+                (void)ADXL_MultiReadDevice(driverPtr[0]);
+                (void)ADXL_MultiReadDevice(driverPtr[1]);
+                (void)ADXL_MultiReadDevice(driverPtr[2]);
+                (void)ADXL_MultiReadDevice(driverPtr[3]);
+                (void)ADXL_MultiReadDevice(driverPtr[4]);
+                (void)ADXL_RawData(devicesPtr, buffer, 100);
+                (void)HAL_UART_Transmit_DMA(&huart2, (uint8_t*)buffer, strlen(buffer));
             }
-            HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+            (void)HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
         }
-        HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
+        (void)HAL_PWR_EnterSLEEPMode(PWR_MAINREGULATOR_ON, PWR_SLEEPENTRY_WFI);
         /* USER CODE END WHILE */
 
         /* USER CODE BEGIN 3 */
