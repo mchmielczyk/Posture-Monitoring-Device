@@ -73,10 +73,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef* huart)
 }
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef* hrtc)
 {
-    if (hrtc == &hrtc)
-    {
-        rtcStatus = 1;
-    }
+    rtcStatus = 1;
 }
 /* USER CODE END 0 */
 
@@ -92,9 +89,9 @@ int main(void)
 
     for (int i = 0; i < 5; i++)
     {
-        driverPtr[i]->iface = GetSTM32Interface();
-        driverPtr[i]->device = devicesPtr[i];
-        driverPtr[i]->id = i;
+        driverPtr[i].iface = GetSTM32Interface();
+        driverPtr[i].device = devicesPtr[i];
+        driverPtr[i].id = i;
     }
 
     /* USER CODE END 1 */
@@ -130,29 +127,26 @@ int main(void)
     ADXL345_Status preConfiguration = ADXL345_OK;
     for (int i = 0; i < 5; i++)
     {
+        preConfiguration = ADXL_SetMeasure(&driverPtr[i], ADXL345_RESET);
+
         if (preConfiguration == ADXL345_OK)
         {
-            preConfiguration = ADXL_SetMeasure(driverPtr[i], ADXL345_RESET);
+            preConfiguration = ADXL_SetFullResolution(&driverPtr[i], ADXL345_SET);
         }
 
         if (preConfiguration == ADXL345_OK)
         {
-            preConfiguration = ADXL_SetFullResolution(driverPtr[i], ADXL345_SET);
+            preConfiguration = ADXL_SetRange(&driverPtr[i], RANGE_16G);
         }
 
         if (preConfiguration == ADXL345_OK)
         {
-            preConfiguration = ADXL_SetRange(driverPtr[i], RANGE_16G);
+            preConfiguration = ADXL_SetJustify(&driverPtr[i], ADXL345_RESET);
         }
 
         if (preConfiguration == ADXL345_OK)
         {
-            preConfiguration = ADXL_SetJustify(driverPtr[i], ADXL345_RESET);
-        }
-
-        if (preConfiguration == ADXL345_OK)
-        {
-            preConfiguration = ADXL_SetMeasure(driverPtr[i], ADXL345_SET);
+            preConfiguration = ADXL_SetMeasure(&driverPtr[i], ADXL345_SET);
         }
 
         if (preConfiguration != ADXL345_OK)
@@ -170,11 +164,11 @@ int main(void)
             if (dmaStatus == 0)
             {
                 dmaStatus = 1;
-                (void)ADXL_MultiReadDevice(driverPtr[0]);
-                (void)ADXL_MultiReadDevice(driverPtr[1]);
-                (void)ADXL_MultiReadDevice(driverPtr[2]);
-                (void)ADXL_MultiReadDevice(driverPtr[3]);
-                (void)ADXL_MultiReadDevice(driverPtr[4]);
+                (void)ADXL_MultiReadDevice(&driverPtr[0]);
+                (void)ADXL_MultiReadDevice(&driverPtr[1]);
+                (void)ADXL_MultiReadDevice(&driverPtr[2]);
+                (void)ADXL_MultiReadDevice(&driverPtr[3]);
+                (void)ADXL_MultiReadDevice(&driverPtr[4]);
                 (void)ADXL_RawData(devicesPtr, buffer, 100);
                 (void)HAL_UART_Transmit_DMA(&huart2, (uint8_t*)buffer, strlen(buffer));
             }

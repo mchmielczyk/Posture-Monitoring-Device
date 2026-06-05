@@ -17,7 +17,7 @@ extern ADXL345Data AdxlRFO;
 extern ADXL345Data AdxlBAC;
 
 extern ADXL345Data* devicesPtr[5];
-extern ADXL345Driver* driverPtr[5];
+extern ADXL345Driver driverPtr[5];
 
 void ADXL_RawData(ADXL345Data* Device[], char* Dest, uint8_t Size);
 void DWT_CycleStart(void);

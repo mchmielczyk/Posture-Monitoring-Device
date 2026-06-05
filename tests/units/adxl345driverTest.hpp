@@ -10,4 +10,5 @@ extern "C"
 #include "../../Core/Inc/adxl345.h"
 #include "../spies/adxl345spy.h"
 }
+void TEST_CheckSpyLastReadAndWrite(uint8_t lastRead, uint8_t lastWrite);
 #endif //!_H_ADXL345DRIVERTEST_

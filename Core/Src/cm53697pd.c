@@ -22,7 +22,7 @@ ADXL345Data AdxlBAC = {
 
 ADXL345Data* devicesPtr[5] = {&AdxlLAR, &AdxlRAR, &AdxlLFO, &AdxlRFO, &AdxlBAC};
 
-ADXL345Driver* driverPtr[5];
+ADXL345Driver driverPtr[5];
 
 void ADXL_RawData(ADXL345Data* Device[], char* Dest, uint8_t Size)
 {

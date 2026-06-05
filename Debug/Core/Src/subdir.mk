@@ -20,9 +20,6 @@ C_SRCS += \
 ../Core/Src/system_stm32l4xx.c \
 ../Core/Src/usart.c 
 
-O_SRCS += \
-../Core/Src/adxl345.o 
-
 OBJS += \
 ./Core/Src/adxl345.o \
 ./Core/Src/cm53697pd.o \
