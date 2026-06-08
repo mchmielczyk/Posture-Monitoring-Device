@@ -4,9 +4,9 @@
 
 **Energy-efficient wearable motion acquisition platform - STM32L476RG with five distributed ADXL345 accelerometers**
 
-[![Nominated – Best Engineering Thesis 2026](https://img.shields.io/badge/Nominated-Best_Engineering_Thesis_2026-gold?style=for-the-badge)](https://zut.edu.pl)
-[![Language](https://img.shields.io/badge/Language-Embedded_C-blue?style=for-the-badge&logo=c)](https://en.wikipedia.org/wiki/Embedded_C)
-[![Platform](https://img.shields.io/badge/Platform-STM32L476RG-03234B?style=for-the-badge)](https://www.st.com/en/microcontrollers-microprocessors/stm32l476rg.html)
+[![Nominated - Best Engineering Thesis 2026](https://img.shields.io/badge/Nominated-Best_Engineering_Thesis_2026-gold?style=for-the-badge)]()
+[![Language](https://img.shields.io/badge/Language-Embedded_C-blue?style=for-the-badge&logo=c)]()
+[![Platform](https://img.shields.io/badge/Platform-STM32L476RG-03234B?style=for-the-badge)]()
 [![Architecture](https://img.shields.io/badge/Architecture-Bare--Metal_Event--Driven-green?style=for-the-badge)]()
 
 *Nominated for **Best Engineering Thesis of 2026** · Faculty of Computer Science · West Pomeranian University of Technology · Result pending (2027)*
