@@ -72,7 +72,7 @@ The firmware was engineered with a production mindset: hardware-independent driv
 
 ## Firmware Architecture
 
-The firmware is a fully event-driven, bare-metal application. The CPU remains in sleep mode for the majority of runtime, waking exclusively on hardware interrupts. Two WFI (Wait For Interrupt) entry points are present in the main loop: one after UART DMA transmission is dispatched, and one as the idle fallback - the CPU never spins.
+The firmware is a fully event-driven, bare-metal application. The CPU remains in sleep mode for the majority of runtime, waking exclusively on hardware interrupts. Two WFI (Wait For Interrupt) entry points are present in the main loop: one after UART DMA transmission is dispatched, and one as the idle fallback.
 
 The acquisition cycle is RTC-gated. The RTC is driven from the LSE (Low-Speed External 32.768 kHz crystal), the lowest-power clock source on the STM32L4, consuming negligible current while the rest of the device sleeps.
 
